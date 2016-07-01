@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 <dom-module id="things-timeline-event-info">
   <template>
@@ -88,7 +88,7 @@
 
     <div class="btns">
       <paper-button on-tap="onTapPreview">preview</paper-button>
-      <paper-button on-tap="onTapHistory" hidden="isPrintable">history</paper-button>
+      <paper-button on-tap="onTapHistory" hidden="isHidden">history</paper-button>
       <paper-button on-tap="onTapConfirm">confirm</paper-button>
       <!-- <paper-button class="important" on-tap="onImageDownload">image download</paper-button> -->
       <!-- <paper-button><iron-icon icon="icons:file-download"></iron-icon> ZPL download</paper-button> -->
@@ -116,7 +116,7 @@
             computed: 'evalModel(object)',
             observer: 'onModelChange'
           },
-          isPrintable: {
+          isHidden: {
             type: 'Number'
           }
         },

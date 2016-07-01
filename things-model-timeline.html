@@ -1,5 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-item/paper-item.html">
+
 <link rel="import" href="./things-timeline-event.html">
 <link rel="import" href="./things-timeline-event-info.html">
 
@@ -46,7 +50,8 @@
     </paper-listbox>
 
     <things-timeline-event-info event="[[event]]"
-                                object="[[object]]">
+                                object="[[object]]"
+                                is-hidden=[[!isPrintable]]>
     </things-timeline-event-info>
 
   </template>
@@ -71,6 +76,10 @@
             type: Array,
             value: [],
             observer: 'onEventsChange'
+          },
+
+          isPrintable: {
+            type: Boolean
           }
         },
 
