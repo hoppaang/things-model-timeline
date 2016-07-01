@@ -1,0 +1,103 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="./things-timeline-event.html">
+<link rel="import" href="./things-timeline-event-info.html">
+
+<dom-module id="things-timeline">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --paper-item-min-height:35px;
+        @apply(--layout-horizontal);
+        --paper-item-focused-before:{
+          background-color:transparent;
+        }
+      }
+      #timeline {
+        @apply(--layout-flex-2);
+        background-color:transparent;
+      }
+      things-timeline-event-info {
+        @apply(--layout-flex-4);
+      }
+      paper-item{
+        padding:0 0 0 16px;
+      }
+      paper-item[aria-selected='true']::shadow .timecell,paper-item[focused]::shadow .timecell{
+        @apply(--things-timecell-active)
+      }
+      paper-item[aria-selected='true']::shadow .timecell:before{
+        @apply(--things-timecell-active-icon)
+      }
+      paper-item[aria-selected='true']::shadow .timecell .seq,paper-item[aria-selected='true']::shadow .timecell .etc{
+        margin-left:10px;
+      }
+    </style>
+
+    <paper-listbox id="timeline"
+                   selected="{{seq}}">
+      <template is="dom-repeat" items="[[events]]">
+        <paper-item>
+          <things-timeline-event event="[[item]]">
+          </things-timeline-event>
+        </paper-item>
+      </template>
+    </paper-listbox>
+
+    <things-timeline-event-info event="[[event]]"
+                                object="[[object]]">
+    </things-timeline-event-info>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-timeline',
+
+        properties: {
+          object: {
+            notify: true
+          },
+
+          labelId: {
+            notify: true
+          },
+
+          events: {
+            type: Array,
+            value: [],
+            observer: 'onEventsChange'
+          }
+        },
+
+        observers: [
+          'onChangeEvent(seq)'
+        ],
+
+        onChangeEvent: function(after) {
+
+          this.event = this.events[after]
+          this.labelId = this.event.id;
+        },
+
+        onEventsChange: function(events) {
+
+          if(events && events.length > 0) {
+            this.seq = 0;
+            this.event = events[this.seq]
+          } else {
+            this.event = null
+          }
+        },
+
+        ready: function() {
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

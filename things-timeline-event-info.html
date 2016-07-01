@@ -1,0 +1,188 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-fab-transitions/paper-fab-speed-dial.html">
+
+<dom-module id="things-timeline-event-info">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color:var(--things-white-color);
+      }
+      .event-info{
+        margin:auto;
+        padding:20px 10px 10px 10px;
+        max-width:95%;
+        text-align:center;
+      }
+      .event-info img{
+        border-radius:7px;
+        border:1px solid rgba(0,0,0,.1);
+        margin-bottom:10px;
+        max-width:100%;
+        max-height:70%;
+      }
+      .event-info div{padding:3px 0;overflow:hidden}
+      .event-info div label{
+        width:25%;
+        float:left;
+        text-align:right;
+        font-size:12px;
+        color:#999;
+        line-height:1.6;
+      }
+      .event-info div span{
+        width:71%;
+        float:left;
+        padding-left:1%;
+        text-align:left;
+        font-size:12px;
+        line-height:1.5
+      }
+      .btns{
+        margin-top:15px;
+        text-align:center;
+      }
+      #preview{
+        height: 300px;
+        @apply(--layout-vertical);
+      }
+      things-scene-view{
+        @apply(--layout-flex)
+      }
+      paper-button{
+        @apply(--things-button)
+      }
+      paper-button.important{
+        @apply(--things-button-important)
+      }
+    </style>
+
+    <div class="event-info">
+      <img width="80%" src$="[[event.thumbnail]]" class="shadow"/>
+
+      <div class="info-cell">
+        <label>Creator</label>
+        <span>[[event.creator.name]]</span>
+      </div>
+
+      <div class="info-cell">
+        <label>Confirmer</label>
+        <!-- <span>[[event.updater.name]]</span> -->
+        <span>ID010123</span>
+      </div>
+
+      <div class="info-cell">
+        <label>Created At</label>
+        <span>[[event.created_at]]</span>
+      </div>
+      <!-- <div class="info-cell">
+        <label>수정일</label>
+        <span>[[event.updated_at]]</span>
+      </div> -->
+      <div class="info-cell">
+        <label>variables</label>
+        <span>[[variables]]</span>
+      </div>
+    </div>
+
+    <div class="btns">
+      <paper-button on-tap="onTapPreview">preview</paper-button>
+      <paper-button on-tap="onTapHistory" hidden="isPrintable">history</paper-button>
+      <paper-button on-tap="onTapConfirm">confirm</paper-button>
+      <!-- <paper-button class="important" on-tap="onImageDownload">image download</paper-button> -->
+      <!-- <paper-button><iron-icon icon="icons:file-download"></iron-icon> ZPL download</paper-button> -->
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-timeline-event-info',
+
+        properties: {
+          object: {
+            notify: true
+          },
+          event: {
+            notify: true,
+            observer: 'eventChanged'
+          },
+          model: {
+            notify: true,
+            computed: 'evalModel(object)',
+            observer: 'onModelChange'
+          },
+          isPrintable: {
+            type: 'Number'
+          }
+        },
+
+        ready: function() {
+        },
+
+        evalModel: function(object) {
+
+          if(object && object.model)
+            return eval("(" + object.model + ")")
+
+          return {
+            components: [],
+            variables: []
+          }
+        },
+
+        onModelChange: function(model) {
+          if(!model.variables)
+            return
+          this.variables = model.variables.map(function(variable) {
+            return variable.name
+          }).join(', ')
+        },
+
+        eventChanged: function(value) {
+          //console.log(value)
+        },
+
+        formatEventDate: function(date) {
+          if(!date) {
+            return date;
+          } else if(typeof(date) == 'number') {
+            return new Date(date).toISOString().substring(0, 10)
+          } else if(typeof(date) == 'object') {
+            return date.toISOString().substring(0, 10)
+          } else {
+            return date;
+          }
+        },
+
+        onTapModeler: function(e) {
+          page(`/modeler/${this.object.id}`);
+        },
+
+        onTapPreview: function(e) {
+          page(`/preview/${this.object.id}`);
+        },
+
+        onTapHistory: function(e) {
+          page(`/print-history/${this.object.id}`);
+        },
+
+        onTapConfirm: function(e) {
+          // 
+        },
+
+        onTapCopy: function(e) {
+          // page(`/modeler/${this.object.id}`);
+        },
+
+        onTapDelete: function(e) {
+          // page(`/modeler/${this.object.id}`);
+        }
+      });
+    })();
+  </script>
+</dom-module>

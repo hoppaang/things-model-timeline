@@ -1,0 +1,114 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="things-timeline-event">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --iron-icon-width:14px;
+        --iron-icon-height:14px;
+        width:100%;
+      }
+      .line{
+        background-color:#4198ca;
+        width:2px;min-height:55px;
+        position:absolute;
+        margin-top:9px;margin-left:5px;
+      }
+      .dot{
+        background-color:#fff;
+        width:9px;height:9px;
+        border:2px solid #4198ca;
+        border-radius:50%;
+        position:absolute;
+        margin-top:6px;
+        z-index:1000;
+      }
+      .dot iron-icon{display:none;}
+      :host[unreleased] .line{
+        background-color:#ccc;
+      }
+      :host[unreleased] .dot{
+        background-color:#fff;
+        border:2px solid #b5b5b5;
+      }
+      :host[active] .dot{
+        width:14px;height:14px;
+        margin-top:2px;
+        margin-left:-2px;
+      }
+      :host[active] .dot iron-icon{
+        display:block;
+      }
+      .seq{
+        @apply(--things-timecell-seq)
+      }
+      .etc{
+        @apply(--things-timecell-etc)
+      }
+      .etc iron-icon{
+        margin-top:-2px;
+        margin-left:7px;
+        margin-right:2px;
+      }
+      .etc iron-icon:first-child{margin-left:0;}
+      .timecell{
+        margin-bottom:10px;
+      }
+    </style>
+
+    <span class="line"></span>
+    <span class="dot"><iron-icon icon="icons:done"></iron-icon></span>
+    <div class="timecell">
+      <span class="seq">v.[[event.version]]</span>
+      <span class="etc">
+        <iron-icon icon="icons:account-circle"></iron-icon>[[event.updater.name]]
+        <iron-icon icon="icons:query-builder"></iron-icon>[[event.updated_at]]
+      </span>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'things-timeline-event',
+
+        properties: {
+          event: {
+            notify: true,
+            observer: 'onChangeEvent'
+          }
+        },
+
+        ready: function() {
+        },
+
+        onChangeEvent: function(event) {
+          this.removeAttribute('active')
+          this.removeAttribute('unreleased')
+
+          switch(event.status) {
+          case 'RELEASED':
+            // if(...)
+            // this.setAttribute('active', true)
+            break
+          case 'EDIT':
+            this.setAttribute('unreleased', true)
+            break
+          }
+        },
+
+        formatEventDate: function(date) {
+          if(date)
+            return new Date(date).toISOString().substring(0, 10)
+        },
+
+
+      });
+    })();
+  </script>
+</dom-module>
