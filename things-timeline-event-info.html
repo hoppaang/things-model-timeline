@@ -159,16 +159,12 @@
           }
         },
 
-        onTapModeler: function(e) {
-          page(`/modeler/${this.object.id}`);
-        },
-
         onTapPreview: function(e) {
-          page(`/preview/${this.object.id}`);
+          page(`/preview/${this.event.id}`);
         },
 
         onTapHistory: function(e) {
-          page(`/print-history/${this.object.id}`);
+          page(`/print-history/${this.event.id}`);
         },
 
         onTapConfirm: function(e) {
