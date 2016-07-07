@@ -2,6 +2,8 @@
 
 <link rel="import" href="../paper-button/paper-button.html">
 
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
+
 <dom-module id="things-timeline-event-info">
   <template>
     <style>
@@ -62,18 +64,24 @@
       <img width="80%" src$="[[event.thumbnail]]" class="shadow"/>
 
       <div class="info-cell">
-        <label>Creator</label>
+        <label>
+          <things-i18n-msg msgid="label.creator" auto>creator</things-i18n-msg>
+        </label>
         <span>[[event.creator.name]]</span>
       </div>
 
       <div class="info-cell">
-        <label>Confirmer</label>
+        <label>
+          <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
+        </label>
         <!-- <span>[[event.updater.name]]</span> -->
         <span>ID010123</span>
       </div>
 
       <div class="info-cell">
-        <label>Created At</label>
+        <label>
+          <things-i18n-msg msgid="label.created-at" auto>created At</things-i18n-msg>
+        </label>
         <span>[[event.created_at]]</span>
       </div>
       <!-- <div class="info-cell">
@@ -81,15 +89,23 @@
         <span>[[event.updated_at]]</span>
       </div> -->
       <div class="info-cell">
-        <label>variables</label>
+        <label>
+          <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
+        </label>
         <span>[[variables]]</span>
       </div>
     </div>
 
     <div class="btns">
-      <paper-button on-tap="onTapPreview">preview</paper-button>
-      <paper-button on-tap="onTapHistory" hidden="[[isHidden]]">history</paper-button>
-      <paper-button on-tap="onTapConfirm">confirm</paper-button>
+      <paper-button on-tap="onTapPreview">
+        <things-i18n-msg msgid="button.preview" auto>preview</things-i18n-msg>
+      </paper-button>
+      <paper-button on-tap="onTapHistory" hidden="[[isHidden]]">
+        <things-i18n-msg msgid="button.history" auto>history</things-i18n-msg>
+      </paper-button>
+      <paper-button on-tap="onTapConfirm">
+        <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
+      </paper-button>
       <!-- <paper-button class="important" on-tap="onImageDownload">image download</paper-button> -->
       <!-- <paper-button><iron-icon icon="icons:file-download"></iron-icon> ZPL download</paper-button> -->
     </div>
