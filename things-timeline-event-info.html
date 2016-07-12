@@ -61,7 +61,7 @@
     </style>
 
     <div class="event-info">
-      <img width="80%" src$="[[event.thumbnail]]" class="shadow"/>
+      <img width="80%" src$="[[computeImgSrc(event.thumbnail)]]" class="shadow"/>
 
       <div class="info-cell">
         <label>
@@ -119,6 +119,10 @@
       Polymer({
         is: 'things-timeline-event-info',
 
+        behaviors: [
+          Things.GlobalBehavior
+        ],
+
         properties: {
           object: {
             notify: true
@@ -138,6 +142,11 @@
         },
 
         ready: function() {
+        },
+
+        computeImgSrc: function(src) {
+          var src = `${this.globals.baseUrl}/download/${src}`;
+          return src;
         },
 
         evalModel: function(object) {
