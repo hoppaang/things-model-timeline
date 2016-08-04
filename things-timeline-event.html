@@ -13,10 +13,12 @@
       .line{
         @apply(--things-timeline-line);
         background-color:#4198ca;
+        left:10px;
       }
       .dot{
         @apply(--things-timeline-dot);
         border:2px solid #4198ca;
+        left:10px;
       }
       .dot iron-icon{display:none;}
       :host[unreleased] .line{
@@ -35,10 +37,12 @@
         display:block;
       }
       .seq{
-        @apply(--things-timecell-seq)
+        @apply(--things-timecell-seq);
+        text-align:left;
       }
       .etc{
-        @apply(--things-timecell-etc)
+        @apply(--things-timecell-etc);
+        white-space: nowrap;
       }
       .etc iron-icon{
         margin-top:-2px;
@@ -48,7 +52,11 @@
       .etc iron-icon:first-child{margin-left:0;}
       .timecell{
         margin-bottom:10px;
+        text-align:left;
+        direction:ltr;
       }
+      @media only all and (max-width:500px) {.etc{display:none;}}
+      @media only all and (max-width:600px) {.etc{width:60px !important;overflow:hidden !important;display:block}}
     </style>
 
     <span class="line"></span>
