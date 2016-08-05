@@ -2,7 +2,9 @@
 
 <link rel="import" href="../paper-button/paper-button.html">
 
+<link rel="import" href="../things-ajax/things-ajax.html">
 <link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
 <dom-module id="things-timeline-event-info">
   <template>
@@ -11,21 +13,27 @@
         display: block;
         background-color:var(--things-white-color);
       }
-      .event-info{
+
+      .event-info {
         margin:auto;
         padding:20px 10px 10px 10px;
         max-width:95%;
         text-align:center;
       }
-      .event-info img{
+
+      .event-info img {
         border-radius:7px;
         border:1px solid rgba(0,0,0,.1);
         margin-bottom:10px;
         max-width:100%;
         max-height:70%;
       }
-      .event-info div{padding:3px 0;overflow:hidden}
-      .event-info div label{
+
+      .event-info div {
+        padding:3px 0;overflow:hidden
+      }
+
+      .event-info div label {
         width:25%;
         float:left;
         text-align:right;
@@ -33,7 +41,8 @@
         color:#999;
         line-height:1.6;
       }
-      .event-info div span{
+
+      .event-info div span {
         width:71%;
         float:left;
         padding-left:1%;
@@ -41,27 +50,48 @@
         font-size:12px;
         line-height:1.5
       }
-      .btns{
+
+      .btns {
         margin-top:15px;
         text-align:center;
       }
-      #preview{
+
+      #preview {
         height: 300px;
         @apply(--layout-vertical);
       }
-      things-scene-view{
+
+      things-scene-view {
         @apply(--layout-flex)
       }
-      paper-button{
+
+      paper-button {
         @apply(--things-button)
       }
-      paper-button.important{
+
+      paper-button.important {
         @apply(--things-button-important)
       }
+
       @media only all and (max-width:600px) {.btns paper-button {padding:9px 7px 7px 7px;margin:0}}
     </style>
+
     <div class="event-info">
       <img width="80%" src$="[[computeImgSrc(event.thumbnail)]]" class="shadow"/>
+
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.version" auto>version</things-i18n-msg>
+        </label>
+        <span>[[event.version]]</span>
+      </div>
+
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.status" auto>status</things-i18n-msg>
+        </label>
+        <span>[[event.status]]</span>
+      </div>
 
       <div class="info-cell">
         <label>
@@ -72,9 +102,15 @@
 
       <div class="info-cell">
         <label>
+          <things-i18n-msg msgid="label.updater" auto>updater</things-i18n-msg>
+        </label>
+        <span>[[event.updater.name]]</span>
+      </div>
+
+      <div class="info-cell">
+        <label>
           <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
         </label>
-        <!-- <span>[[event.updater.name]]</span> -->
         <span>ID010123</span>
       </div>
 
@@ -84,12 +120,14 @@
         </label>
         <span>[[event.created_at]]</span>
       </div>
+
       <div class="info-cell">
         <label>
           <things-i18n-msg msgid="label.updated-at" auto>updated At</things-i18n-msg>
         </label>
         <span>[[event.updated_at]]</span>
       </div>
+      
       <div class="info-cell">
         <label>
           <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
@@ -102,16 +140,44 @@
       <paper-button on-tap="onTapPreview">
         <things-i18n-msg msgid="button.preview" auto>preview</things-i18n-msg>
       </paper-button>
-      <paper-button on-tap="onTapHistory" hidden="[[isHidden]]">
+      <paper-button on-tap="onTapHistory" hidden="[[isEditMode]]">
         <things-i18n-msg msgid="button.history" auto>history</things-i18n-msg>
       </paper-button>
-      <paper-button on-tap="onTapConfirm">
-        <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
+      <paper-button class="important" on-tap="onImageDownload">
+        <things-i18n-msg msgid="button.image-download" auto>image download</things-i18n-msg>
       </paper-button>
-      <!-- <paper-button class="important" on-tap="onImageDownload">image download</paper-button> -->
-      <!-- <paper-button><iron-icon icon="icons:file-download"></iron-icon> ZPL download</paper-button> -->
+
+      <paper-button on-tap="onVersionUp" hidden="[[isEditMode]]"></iron-icon>
+        <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
+      </paper-button>
+      <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
+        <things-i18n-msg msgid="button.request-confirm" auto>request confirm</things-i18n-msg>
+      </paper-button>
+      <paper-button on-tap="onTapSelfConfirm" hidden="[[!isEditMode]]">
+        <things-i18n-msg msgid="button.self-confirm" auto>self confirm</things-i18n-msg>
+      </paper-button>
     </div>
 
+    <things-ajax 
+      id="version-up"
+      resource-url="labels/:id/version_up"
+      method="POST"
+      content-type="application/json">
+    </things-ajax>
+
+    <things-ajax 
+      id="request-confirm"
+      resource-url="labels/:id/request_approval"
+      method="POST"
+      content-type="application/json">
+    </things-ajax>
+
+    <things-ajax 
+      id="self-confirm"
+      resource-url="labels/:id/release_forcibly"
+      method="PUT"
+      content-type="application/json">
+    </things-ajax>
   </template>
 
   <script>
@@ -122,58 +188,86 @@
         is: 'things-timeline-event-info',
 
         behaviors: [
-          Things.GlobalBehavior
+          Things.GlobalBehavior,
+          Things.MsgBoxBehavior
         ],
 
         properties: {
           object: {
             notify: true
           },
+
+          events: {
+            notify: true
+          },
+
           event: {
             notify: true,
             observer: 'eventChanged'
           },
+
           model: {
             notify: true,
             computed: 'evalModel(object)',
             observer: 'onModelChange'
           },
+
           isHidden: {
+            type: Boolean
+          },
+
+          /**
+           * Version Up 버튼을 보여주거나 숨기기 위한 변수 
+           */
+          isEditMode: {
             type: Boolean
           }
         },
 
-        ready: function() {
+        listeners : {
+          'request-confirm.things-ajax-response' : 'refreshCurrentEvent',
+          'self-confirm.things-ajax-response' : 'refreshCurrentEvent',
+          'version-up.things-ajax-response' : 'refreshCurrentEvent'
         },
 
         computeImgSrc: function(src) {
           var src = `${this.globals.baseUrl}/download/${src}`;
+          if(this.event) {
+             src += '?dc=' + this.event.updated_at
+          }
+
           return src;
         },
 
         evalModel: function(object) {
-
           if(object && object.model)
-            return eval("(" + object.model + ")")
+            return eval("(" + object.model + ")");
 
-          return {
-            components: [],
-            variables: []
+          return { components: [], variables: [] };
+        },
+
+        /**
+         * 모델 변경시 
+         */
+        onModelChange: function(model) {
+          if(!model.variables)
+            return;
+
+          this.variables = model.variables.map(function(variable) { return variable.name }).join(', ');
+        },
+
+        /**
+         * version changed
+         */
+        eventChanged: function(value) {
+          if(value) {
+            this.isEditMode = (value.status == 'EDIT');
           }
         },
 
-        onModelChange: function(model) {
-          if(!model.variables)
-            return
-          this.variables = model.variables.map(function(variable) {
-            return variable.name
-          }).join(', ')
-        },
-
-        eventChanged: function(value) {
-          //console.log(value)
-        },
-
+        /**
+         * format Date Data
+         */
         formatEventDate: function(date) {
           if(!date) {
             return date;
@@ -186,24 +280,76 @@
           }
         },
 
+        /**
+         * Preview  
+         */
         onTapPreview: function(e) {
           page(`/preview/${this.event.id}`);
         },
 
+        /**
+         * 인쇄 이력  
+         */
         onTapHistory: function(e) {
           page(`/print-history/${this.event.id}`);
         },
 
-        onTapConfirm: function(e) {
-          // 
+        /**
+         * 이미지 다운로드 
+         */
+        onImageDownload: function(e) {
+          var baseUrl = this.get('globals.baseUrl');
+          window.location = baseUrl + '/download/' + this.event.thumbnail;
         },
 
-        onTapCopy: function(e) {
-          // page(`/modeler/${this.object.id}`);
+        /**
+         * 승인 요청  
+         */
+        onTapRequestConfirm: function(e) {
+          console.log(this.object);
+
+          this.doTransaction(Things.DataGlobal.t('text.want-to-request-confirm'), Things.DataGlobal.t('button.request-confirm'), 'request-confirm');
         },
 
-        onTapDelete: function(e) {
-          // page(`/modeler/${this.object.id}`);
+        /**
+         * 자가 승인   
+         */
+        onTapSelfConfirm: function(e) {
+          this.doTransaction(Things.DataGlobal.t('text.want-to-self-confirm'), Things.DataGlobal.t('button.self-confirm'), 'self-confirm');
+        },
+
+        /**
+         * 버전 업  
+         */
+        onVersionUp: function(e) {
+          this.doTransaction(Things.DataGlobal.t('text.want-to-version-up'), Things.DataGlobal.t('button.version-up'), 'version-up');
+        },
+
+        /**
+         * 트랜잭션 처리 후 현재 버전 정보 Refresh
+         */
+        refreshCurrentEvent: function(e) {
+          this.event = e.detail;
+          this.object = e.detail;
+          page(`/info/${e.detail.id}`);
+        },
+
+        /**
+         * 트랜잭션 처리 
+         */
+        doTransaction: function(tranTitle, tranMsg, ajaxId) {
+          var me = this;
+
+          this.openConfirmMsg({
+            type : 'info',
+            title : tranTitle,
+            text : tranMsg,
+            showCancelButton: true
+          }, function() {
+            var versionUpAjax = me.$[ajaxId];
+            versionUpAjax.resourceId = me.event.id;
+            versionUpAjax.generateRequest();
+          });
         }
       });
     })();
