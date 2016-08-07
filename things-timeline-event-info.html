@@ -140,21 +140,23 @@
       <paper-button on-tap="onTapPreview">
         <things-i18n-msg msgid="button.preview" auto>preview</things-i18n-msg>
       </paper-button>
-      <paper-button on-tap="onTapHistory" hidden="[[isEditMode]]">
+      <paper-button on-tap="onTapHistory" hidden="[[!isReleaseMode]]">
         <things-i18n-msg msgid="button.history" auto>history</things-i18n-msg>
       </paper-button>
       <paper-button class="important" on-tap="onImageDownload">
         <things-i18n-msg msgid="button.image-download" auto>image download</things-i18n-msg>
       </paper-button>
-
-      <paper-button on-tap="onVersionUp" hidden="[[isEditMode]]"></iron-icon>
+      <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]"></iron-icon>
         <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
       </paper-button>
       <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
         <things-i18n-msg msgid="button.request-confirm" auto>request confirm</things-i18n-msg>
       </paper-button>
-      <paper-button on-tap="onTapSelfConfirm" hidden="[[!isEditMode]]">
-        <things-i18n-msg msgid="button.self-confirm" auto>self confirm</things-i18n-msg>
+      <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
+        <things-i18n-msg msgid="button.cancel-request-confirm" auto>cancel request confirm</things-i18n-msg>
+      </paper-button>
+      <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
+        <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
       </paper-button>
     </div>
 
@@ -168,13 +170,20 @@
     <things-ajax 
       id="request-confirm"
       resource-url="labels/:id/request_approval"
-      method="POST"
+      method="PUT"
       content-type="application/json">
     </things-ajax>
 
     <things-ajax 
-      id="self-confirm"
-      resource-url="labels/:id/release_forcibly"
+      id="cancel-request-confirm"
+      resource-url="labels/:id/cancel_request_approval"
+      method="PUT"
+      content-type="application/json">
+    </things-ajax>    
+
+    <things-ajax 
+      id="confirm"
+      resource-url="labels/:id/release"
       method="PUT"
       content-type="application/json">
     </things-ajax>
@@ -217,16 +226,31 @@
           },
 
           /**
-           * Version Up 버튼을 보여주거나 숨기기 위한 변수 
+           * Edit Status
            */
           isEditMode: {
+            type: Boolean
+          },
+
+          /**
+           * Approval Status
+           */
+          isApprovalMode: {
+            type: Boolean
+          },
+
+          /**
+           * Release Status
+           */
+          isReleaseMode: {
             type: Boolean
           }
         },
 
         listeners : {
           'request-confirm.things-ajax-response' : 'refreshCurrentEvent',
-          'self-confirm.things-ajax-response' : 'refreshCurrentEvent',
+          'cancel-request-confirm.things-ajax-response' : 'refreshCurrentEvent',
+          'confirm.things-ajax-response' : 'refreshCurrentEvent',
           'version-up.things-ajax-response' : 'refreshCurrentEvent'
         },
 
@@ -262,6 +286,8 @@
         eventChanged: function(value) {
           if(value) {
             this.isEditMode = (value.status == 'EDIT');
+            this.isApprovalMode = (value.status == 'APPROVAL');
+            this.isReleaseMode = (value.status == 'RELEASED');
           }
         },
 
@@ -310,10 +336,17 @@
         },
 
         /**
-         * 자가 승인   
+         * 승인 요청 취소
          */
-        onTapSelfConfirm: function(e) {
-          this.doTransaction(Things.DataGlobal.t('text.want-to-self-confirm'), Things.DataGlobal.t('button.self-confirm'), 'self-confirm');
+        onTapCancelRequestConfirm: function(e) {
+          this.doTransaction(Things.DataGlobal.t('text.want-to-cancel-request-confirm'), Things.DataGlobal.t('button.cancel-request-confirm'), 'cancel-request-confirm');
+        },
+
+        /**
+         * 승인   
+         */
+        onTapConfirm: function(e) {
+          this.doTransaction(Things.DataGlobal.t('text.want-to-confirm'), Things.DataGlobal.t('button.confirm'), 'confirm');
         },
 
         /**

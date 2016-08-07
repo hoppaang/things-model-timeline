@@ -93,13 +93,15 @@
           this.removeAttribute('unreleased')
 
           switch(event.status) {
-          case 'RELEASED':
-            // if(...)
-            // this.setAttribute('active', true)
-            break
-          case 'EDIT':
-            this.setAttribute('unreleased', true)
-            break
+            case 'RELEASED':
+              this.setAttribute('active', true)
+              break
+            case 'EDIT':
+              this.setAttribute('unreleased', true)
+              break
+            case 'APPROVAL':
+              this.setAttribute('unreleased', true)
+              break
           }
         },
 
