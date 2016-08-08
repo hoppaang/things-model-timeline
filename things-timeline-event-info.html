@@ -78,7 +78,7 @@
     </style>
 
     <div class="event-info">
-      <img width="80%" src$="[[computeImgSrc(event.thumbnail)]]" class="shadow"/>
+      <img width="80%" src$="[[computeImgSrc(event.attachment_id)]]" class="shadow"/>
 
       <div class="info-cell">
         <label>
@@ -349,7 +349,7 @@
          */
         onImageDownload: function(e) {
           var baseUrl = this.get('globals.baseUrl');
-          window.location = baseUrl + '/download/' + this.event.thumbnail;
+          window.location = baseUrl + '/download/' + this.event.attachment_id;
         },
 
         /**
