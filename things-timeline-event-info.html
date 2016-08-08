@@ -119,7 +119,7 @@
         <label>
           <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
         </label>
-        <span>ID010123</span>
+        <span>[[approverName(event)]]</span>
       </div>
 
       <div class="info-cell">
@@ -269,6 +269,13 @@
          */
         isAdminUser: function(user) {
           return (user && user.admin_flag);
+        },
+
+        /**
+         * 승인자 이름  
+         */
+        approverName: function(event) {
+          return event && event.approver ? event.approver.name : '';
         },
 
         computeImgSrc: function(src) {
