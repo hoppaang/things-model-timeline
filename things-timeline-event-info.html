@@ -3,6 +3,7 @@
 <link rel="import" href="../paper-button/paper-button.html">
 
 <link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="../things-global-behavior/things-global-behavior.html">
 <link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
@@ -81,6 +82,13 @@
 
       <div class="info-cell">
         <label>
+          <things-i18n-msg msgid="label.id" auto>id</things-i18n-msg>
+        </label>
+        <span>[[event.id]]</span>
+      </div>
+
+      <div class="info-cell">
+        <label>
           <things-i18n-msg msgid="label.version" auto>version</things-i18n-msg>
         </label>
         <span>[[event.version]]</span>
@@ -155,9 +163,11 @@
       <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
         <things-i18n-msg msgid="button.cancel-request-confirm" auto>cancel request confirm</things-i18n-msg>
       </paper-button>
-      <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
-        <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
-      </paper-button>
+      <template is="dom-if" if="{{isAdminUser(globals.user)}}">
+        <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
+          <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
+        </paper-button>
+      </template>      
     </div>
 
     <things-ajax 
@@ -252,6 +262,13 @@
           'cancel-request-confirm.things-ajax-response' : 'refreshCurrentEvent',
           'confirm.things-ajax-response' : 'refreshCurrentEvent',
           'version-up.things-ajax-response' : 'refreshCurrentEvent'
+        },
+
+        /**
+         * 로그인 사용자가 admin 권한이 있는지 체크 
+         */
+        isAdminUser: function(user) {
+          return (user && user.admin_flag);
         },
 
         computeImgSrc: function(src) {
