@@ -182,19 +182,19 @@
             </template>
         </div>
 
-        <things-ajax id="version-up" resource-url="labels/:id/version_up" method="POST" content-type="application/json">
+        <things-ajax id="version-up" resource-url="[[versionUpUrl]]" method="POST" content-type="application/json">
         </things-ajax>
 
-        <things-ajax id="request-confirm" resource-url="labels/:id/request_approval" method="PUT" content-type="application/json">
+        <things-ajax id="request-confirm" resource-url="[[requestApprovalUrl]]" method="PUT" content-type="application/json">
         </things-ajax>
 
-        <things-ajax id="cancel-request-confirm" resource-url="labels/:id/cancel_request_approval" method="PUT" content-type="application/json">
+        <things-ajax id="cancel-request-confirm" resource-url="[[cancelRequestApprovalUrl]]" method="PUT" content-type="application/json">
         </things-ajax>
 
-        <things-ajax id="confirm" resource-url="labels/:id/release" method="PUT" content-type="application/json">
+        <things-ajax id="confirm" resource-url="[[releaseUrl]]" method="PUT" content-type="application/json">
         </things-ajax>
 
-        <things-ajax id="delete" resource-url="labels/:id" method="DELETE" content-type="application/json">
+        <things-ajax id="delete" resource-url="[[deleteUrl]]" method="DELETE" content-type="application/json">
         </things-ajax>
     </template>
 
@@ -211,6 +211,26 @@
                 ],
 
                 properties: {
+                    // version up url
+                    versionUpUrl: {
+                        type: String
+                    },
+                    // request approval url
+                    requestApprovalUrl: {
+                        type: String
+                    },
+                    // cancel request approval url
+                    cancelRequestApprovalUrl: {
+                        type: String
+                    },
+                    // release url
+                    releaseUrl: {
+                        type: String
+                    },
+                    // delete url
+                    deleteUrl: {
+                        type: String
+                    },
                     object: {
                         notify: true
                     },
@@ -421,9 +441,9 @@
                         text: tranMsg,
                         showCancelButton: true
                     }, function() {
-                        var versionUpAjax = me.$[ajaxId];
-                        versionUpAjax.resourceId = me.event.id;
-                        versionUpAjax.generateRequest();
+                        var ajax = me.$[ajaxId];
+                        ajax.resourceId = me.event.id;
+                        ajax.generateRequest();
                     });
                 },
                 /**

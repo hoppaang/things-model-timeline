@@ -61,7 +61,8 @@
             </template>
         </paper-listbox>
 
-        <things-timeline-event-info events="[[events]]" event="[[event]]" object="{{object}}" is-hidden="[[!isPrintable]]">
+        <things-timeline-event-info version-up-url="[[versionUpUrl]]" request-approval-url="[[requestApprovalUrl]]" cancel-request-approval-url="[[cancelRequestApprovalUrl]]" release-url="[[releaseUrl]]" delete-url="[[deleteUrl]]" events="[[events]]" event="[[event]]"
+            object="{{object}}" is-hidden="[[!isPrintable]]">
         </things-timeline-event-info>
 
     </template>
@@ -74,25 +75,45 @@
                 is: 'things-model-timeline',
 
                 properties: {
+                    // version up url
+                    versionUpUrl: {
+                        type: String
+                    },
+                    // request approval url
+                    requestApprovalUrl: {
+                        type: String
+                    },
+                    // cancel request approval url
+                    cancelRequestApprovalUrl: {
+                        type: String
+                    },
+                    // release url
+                    releaseUrl: {
+                        type: String
+                    },
+                    // delete url
+                    deleteUrl: {
+                        type: String
+                    },
+                    // label
                     object: {
                         notify: true
                     },
-
+                    // label ID
                     labelId: {
                         notify: true
                     },
-
+                    // sorted labels
                     events: {
                         type: Array,
                         value: [],
                         observer: 'onEventsChange'
                     },
-
+                    //
                     isPrintable: {
                         type: Boolean,
                         value: false
                     },
-
                     event: {
                         type: Object,
                         notify: true,
