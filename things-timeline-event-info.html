@@ -89,20 +89,6 @@
 
             <div class="info-cell">
                 <label>
-                    <things-i18n-msg msgid="label.id" auto>id</things-i18n-msg>
-                </label>
-                <span>[[event.id]]</span>
-            </div>
-
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.version" auto>version</things-i18n-msg>
-                </label>
-                <span>[[event.version]]</span>
-            </div>
-
-            <div class="info-cell">
-                <label>
                     <things-i18n-msg msgid="label.status" auto>status</things-i18n-msg>
                 </label>
                 <span>[[event.status]]</span>
@@ -171,6 +157,9 @@
             <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
                 <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
             </paper-button>
+            <paper-button on-tap="onLabelCopy">
+                <things-i18n-msg msgid="button.label-copy" auto>label copy</things-i18n-msg>
+            </paper-button>
             <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
                 <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
             </paper-button>
@@ -181,6 +170,9 @@
                 </paper-button>
             </template>
         </div>
+
+
+        <things-label-copy id="label-copy" object="{{object}}" groups="{{groups}}"></things-label-copy>
 
         <things-ajax id="version-up" resource-url="[[versionUpUrl]]" method="POST" content-type="application/json">
         </things-ajax>
@@ -232,6 +224,10 @@
                         type: String
                     },
                     object: {
+                        notify: true
+                    },
+
+                    groups: {
                         notify: true
                     },
 
@@ -392,6 +388,10 @@
                  */
                 onTapCancelRequestConfirm: function(e) {
                     this.doTransaction(Things.DataGlobal.t('button.cancel-request-confirm'), Things.DataGlobal.t('text.want-to-cancel-request-confirm'), 'cancel-request-confirm');
+                },
+
+                onLabelCopy: function() {
+                    this.$['label-copy'].openCopyDialog();
                 },
 
                 /**
