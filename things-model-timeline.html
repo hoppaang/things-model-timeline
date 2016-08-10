@@ -61,7 +61,7 @@
             </template>
         </paper-listbox>
 
-        <things-timeline-event-info events="[[events]]" event="[[event]]" object="{{object}}" is-hidden="[[!isPrintable]]">
+        <things-timeline-event-info events="[[events]]" event="[[event]]" object="{{object}}" groups="{{groups}}" is-hidden="[[!isPrintable]]">
         </things-timeline-event-info>
 
     </template>
@@ -75,6 +75,10 @@
 
                 properties: {
                     object: {
+                        notify: true
+                    },
+
+                    groups: {
                         notify: true
                     },
 
