@@ -61,8 +61,7 @@
             </template>
         </paper-listbox>
 
-        <things-timeline-event-info version-up-url="[[versionUpUrl]]" request-approval-url="[[requestApprovalUrl]]" cancel-request-approval-url="[[cancelRequestApprovalUrl]]" release-url="[[releaseUrl]]" delete-url="[[deleteUrl]]" events="[[events]]" event="[[event]]"
-            object="{{object}}" is-hidden="[[!isPrintable]]">
+        <things-timeline-event-info resource-url="[[resourceUrl]]" events="[[events]]" event="[[event]]" object="{{object}}" is-hidden="[[!isPrintable]]">
         </things-timeline-event-info>
 
     </template>
@@ -75,26 +74,29 @@
                 is: 'things-model-timeline',
 
                 properties: {
-                    // version up url
-                    versionUpUrl: {
-                        type: String
+                    resourceUrl: {
+                        tpe: String
                     },
-                    // request approval url
-                    requestApprovalUrl: {
-                        type: String
-                    },
-                    // cancel request approval url
-                    cancelRequestApprovalUrl: {
-                        type: String
-                    },
-                    // release url
-                    releaseUrl: {
-                        type: String
-                    },
-                    // delete url
-                    deleteUrl: {
-                        type: String
-                    },
+                    // // version up url
+                    // versionUpUrl: {
+                    //     type: String
+                    // },
+                    // // request approval url
+                    // requestApprovalUrl: {
+                    //     type: String
+                    // },
+                    // // cancel request approval url
+                    // cancelRequestApprovalUrl: {
+                    //     type: String
+                    // },
+                    // // release url
+                    // releaseUrl: {
+                    //     type: String
+                    // },
+                    // // delete url
+                    // deleteUrl: {
+                    //     type: String
+                    // },
                     // label
                     object: {
                         notify: true

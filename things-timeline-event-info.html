@@ -203,6 +203,10 @@
                 ],
 
                 properties: {
+                    resourceUrl: {
+                        tpe: String,
+                        observer: 'resourceUrlChange'
+                    },
                     // version up url
                     versionUpUrl: {
                         type: String
@@ -283,6 +287,21 @@
                     'delete.things-ajax-response': '_onDeleteLabelSuccess'
                 },
 
+                /**
+                 * compute all url
+                 */
+                resourceUrlChange: function(resourceUrl) {
+                    // version up url
+                    this.versionUpUrl = resourceUrl + '/:id/version_up';
+                    // request approval url
+                    this.requestApprovalUrl = resourceUrl + '/:id/request_approval'
+                        // cancel request approval url
+                    this.cancelRequestApprovalUrl = resourceUrl + '/:id/cancel_request_approval'
+                        // release url
+                    this.releaseUrl = resourceUrl + '/:id/release'
+                        // delete url
+                    this.deleteUrl = resourceUrl + '/:id'
+                },
                 /**
                  * 로그인 사용자가 admin 권한이 있는지 체크
                  */
