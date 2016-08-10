@@ -166,10 +166,10 @@
                 <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
             </paper-button>
             <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
-                <things-i18n-msg msgid="button.request-confirm" auto>request confirm</things-i18n-msg>
+                <things-i18n-msg msgid="button.request-release" auto>request release</things-i18n-msg>
             </paper-button>
             <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
-                <things-i18n-msg msgid="button.cancel-request-confirm" auto>cancel request confirm</things-i18n-msg>
+                <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
             </paper-button>
             <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
                 <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
@@ -177,7 +177,7 @@
 
             <template is="dom-if" if="{{isAdminUser(globals.user)}}">
                 <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
-                    <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
+                    <things-i18n-msg msgid="button.release" auto>release</things-i18n-msg>
                 </paper-button>
             </template>
         </div>
@@ -442,19 +442,20 @@
                  * 라벨 삭제 완료 후
                  */
                 _onDeleteLabelSuccess: function(event) {
-                    var oldGroup = this.group
-                    this.group = null;
-                    this.group = oldGroup;
-                    this.object = this.events[1];
-                    this.event = this.events[1];
+                    if (this.events.length == 1) {
+                        this.object = this.events[0];
+                    } else {
+                        this.object = this.events[1];
+                    }
+                    // this.event = this.events[1];
 
                     // 1. 라벨 삭제 후 같은 이름의 라벨이 존재하는 경우
-                    if (this.event) {
-                        page(`/info/${this.event.id}`);
+                    if (this.events.length > 1) {
+                        page(`/info/${this.object.id}`);
                         // 2. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우
                     } else {
                         // FIXME /list/groupId 페이지를 Refresh
-                        page(`/list/${this.group}`);
+                        page(`/list/${this.object.label_group_id}`);
                         // window.location.href = '/';
                     }
                 },
