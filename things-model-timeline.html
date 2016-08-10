@@ -7,118 +7,124 @@
 <link rel="import" href="./things-timeline-event-info.html">
 
 <dom-module id="things-model-timeline">
-  <template>
-    <style>
-      :host {
-        display: block;
-        --paper-item-min-height:35px;
-        @apply(--layout-horizontal);
-        --paper-item-focused-before:{
-          background-color:transparent;
-        }
-      }
-      #timeline {
-        @apply(--layout-flex-2);
-        background-color:transparent;
-        height:100%;
-        overflow-y:auto;
-        direction: rtl;
-      }
-      things-timeline-event-info {
-        @apply(--layout-flex-4);
-        height:100%;
-        overflow-y:auto;
-      }
-      paper-item{
-        padding:0 0 0 16px;
-      }
-      paper-item[aria-selected='true']::shadow .timecell,paper-item[focused]::shadow .timecell{
-        @apply(--things-timecell-active)
-      }
-      paper-item[aria-selected='true']::shadow .timecell:before{
-        @apply(--things-timecell-active-icon)
-      }
-      paper-item[aria-selected='true']::shadow .timecell .seq,paper-item[aria-selected='true']::shadow .timecell .etc{
-        margin-left:10px;
-      }
-    </style>
+    <template>
+        <style>
+            :host {
+                display: block;
+                --paper-item-min-height: 35px;
+                @apply(--layout-horizontal);
+                --paper-item-focused-before: {
+                    background-color: transparent;
+                }
+            }
 
-    <paper-listbox id="timeline"
-                   selected="{{seq}}">
-      <template is="dom-repeat" items="[[events]]">
-        <paper-item>
-          <things-timeline-event event="[[item]]">
-          </things-timeline-event>
-        </paper-item>
-      </template>
-    </paper-listbox>
+            #timeline {
+                @apply(--layout-flex-2);
+                background-color: transparent;
+                height: 100%;
+                overflow-y: auto;
+                direction: rtl;
+            }
 
-    <things-timeline-event-info event="[[event]]"
-                                object="{{object}}"
-                                is-hidden="[[!isPrintable]]">
-    </things-timeline-event-info>
+            things-timeline-event-info {
+                @apply(--layout-flex-4);
+                height: 100%;
+                overflow-y: auto;
+            }
 
-  </template>
+            paper-item {
+                padding: 0 0 0 16px;
+            }
 
-  <script>
-    (function() {
-      'use strict';
+            paper-item[aria-selected='true']::shadow .timecell,
+            paper-item[focused]::shadow .timecell {
+                @apply(--things-timecell-active)
+            }
 
-      Polymer({
-        is: 'things-model-timeline',
+            paper-item[aria-selected='true']::shadow .timecell:before {
+                @apply(--things-timecell-active-icon)
+            }
 
-        properties: {
-          object: {
-            notify: true
-          },
+            paper-item[aria-selected='true']::shadow .timecell .seq,
+            paper-item[aria-selected='true']::shadow .timecell .etc {
+                margin-left: 10px;
+            }
 
-          labelId: {
-            notify: true
-          },
+        </style>
 
-          events: {
-            type: Array,
-            value: [],
-            observer: 'onEventsChange'
-          },
+        <paper-listbox id="timeline" selected="{{seq}}">
+            <template is="dom-repeat" items="[[events]]">
+                <paper-item>
+                    <things-timeline-event event="[[item]]">
+                    </things-timeline-event>
+                </paper-item>
+            </template>
+        </paper-listbox>
 
-          isPrintable: {
-            type: Boolean,
-            value: false
-          },
+        <things-timeline-event-info events="[[events]]" event="[[event]]" object="{{object}}" is-hidden="[[!isPrintable]]">
+        </things-timeline-event-info>
 
-          event:{
-            type: Object,
-            notify: true,
-            readOnly: true
-          }
-        },
+    </template>
 
-        observers: [
-          'onChangeEvent(seq)'
-        ],
+    <script>
+        (function() {
+            'use strict';
 
-        onChangeEvent: function(after) {
+            Polymer({
+                is: 'things-model-timeline',
 
-          // this.event = this.events[after];
-          this._setEvent(this.events[after]);
-          this.labelId = this.event.id;
-        },
+                properties: {
+                    object: {
+                        notify: true
+                    },
 
-        onEventsChange: function(events) {
+                    labelId: {
+                        notify: true
+                    },
 
-          if(events && events.length > 0) {
-            this.seq = 0;
-            this._setEvent(events[this.seq]);
-          } else {
-            this._setEvent(null);
-          }
-        },
+                    events: {
+                        type: Array,
+                        value: [],
+                        observer: 'onEventsChange'
+                    },
 
-        ready: function() {
-        }
+                    isPrintable: {
+                        type: Boolean,
+                        value: false
+                    },
 
-      });
-    })();
-  </script>
+                    event: {
+                        type: Object,
+                        notify: true,
+                        readOnly: true
+                    }
+                },
+
+                observers: [
+                    'onChangeEvent(seq)'
+                ],
+
+                onChangeEvent: function(after) {
+
+                    // this.event = this.events[after];
+                    this._setEvent(this.events[after]);
+                    this.labelId = this.event.id;
+                },
+
+                onEventsChange: function(events) {
+
+                    if (events && events.length > 0) {
+                        this.seq = 0;
+                        this._setEvent(events[this.seq]);
+                    } else {
+                        this._setEvent(null);
+                    }
+                },
+
+                ready: function() {}
+
+            });
+        })();
+
+    </script>
 </dom-module>

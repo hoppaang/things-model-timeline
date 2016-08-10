@@ -8,405 +8,458 @@
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
 <dom-module id="things-timeline-event-info">
-  <template>
-    <style>
-      :host {
-        display: block;
-        background-color:var(--things-white-color);
-      }
+    <template>
+        <style>
+            :host {
+                display: block;
+                background-color: var(--things-white-color);
+            }
 
-      .event-info {
-        margin:auto;
-        padding:20px 10px 10px 10px;
-        max-width:95%;
-        text-align:center;
-      }
+            .event-info {
+                margin: auto;
+                padding: 20px 10px 10px 10px;
+                max-width: 95%;
+                text-align: center;
+            }
 
-      .event-info img {
-        border-radius:7px;
-        border:1px solid rgba(0,0,0,.1);
-        margin-bottom:10px;
-        max-width:100%;
-        max-height:70%;
-      }
+            .event-info img {
+                border-radius: 7px;
+                border: 1px solid rgba(0, 0, 0, .1);
+                margin-bottom: 10px;
+                max-width: 100%;
+                max-height: 70%;
+            }
 
-      .event-info div {
-        padding:3px 0;overflow:hidden
-      }
+            .event-info div {
+                padding: 3px 0;
+                overflow: hidden
+            }
 
-      .event-info div label {
-        width:25%;
-        float:left;
-        text-align:right;
-        font-size:12px;
-        color:#999;
-        line-height:1.6;
-      }
+            .event-info div label {
+                width: 25%;
+                float: left;
+                text-align: right;
+                font-size: 12px;
+                color: #999;
+                line-height: 1.6;
+            }
 
-      .event-info div span {
-        width:71%;
-        float:left;
-        padding-left:1%;
-        text-align:left;
-        font-size:12px;
-        line-height:1.5
-      }
+            .event-info div span {
+                width: 71%;
+                float: left;
+                padding-left: 1%;
+                text-align: left;
+                font-size: 12px;
+                line-height: 1.5
+            }
 
-      .btns {
-        margin-top:15px;
-        text-align:center;
-      }
+            .btns {
+                margin-top: 15px;
+                text-align: center;
+            }
 
-      #preview {
-        height: 300px;
-        @apply(--layout-vertical);
-      }
+            #preview {
+                height: 300px;
+                @apply(--layout-vertical);
+            }
 
-      things-scene-view {
-        @apply(--layout-flex)
-      }
+            things-scene-view {
+                @apply(--layout-flex)
+            }
 
-      paper-button {
-        @apply(--things-button)
-      }
+            paper-button {
+                @apply(--things-button)
+            }
 
-      paper-button.important {
-        @apply(--things-button-important)
-      }
+            paper-button.important {
+                @apply(--things-button-important)
+            }
 
-      @media only all and (max-width:600px) {.btns paper-button {padding:9px 7px 7px 7px;margin:0 0 5px 0}}
-    </style>
+            @media only all and (max-width:600px) {
+                .btns paper-button {
+                    padding: 9px 7px 7px 7px;
+                    margin: 0 0 5px 0
+                }
+            }
 
-    <div class="event-info">
-      <img width="80%" src$="[[computeImgSrc(event.attachment_id)]]" class="shadow"/>
+        </style>
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.id" auto>id</things-i18n-msg>
-        </label>
-        <span>[[event.id]]</span>
-      </div>
+        <div class="event-info">
+            <img width="80%" src$="[[computeImgSrc(event.attachment_id)]]" class="shadow" />
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.version" auto>version</things-i18n-msg>
-        </label>
-        <span>[[event.version]]</span>
-      </div>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.id" auto>id</things-i18n-msg>
+                </label>
+                <span>[[event.id]]</span>
+            </div>
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.status" auto>status</things-i18n-msg>
-        </label>
-        <span>[[event.status]]</span>
-      </div>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.version" auto>version</things-i18n-msg>
+                </label>
+                <span>[[event.version]]</span>
+            </div>
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.creator" auto>creator</things-i18n-msg>
-        </label>
-        <span>[[event.creator.name]]</span>
-      </div>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.status" auto>status</things-i18n-msg>
+                </label>
+                <span>[[event.status]]</span>
+            </div>
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.updater" auto>updater</things-i18n-msg>
-        </label>
-        <span>[[event.updater.name]]</span>
-      </div>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.creator" auto>creator</things-i18n-msg>
+                </label>
+                <span>[[event.creator.name]]</span>
+            </div>
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
-        </label>
-        <span>[[approverName(event)]]</span>
-      </div>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.updater" auto>updater</things-i18n-msg>
+                </label>
+                <span>[[event.updater.name]]</span>
+            </div>
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.created-at" auto>created At</things-i18n-msg>
-        </label>
-        <span>[[event.created_at]]</span>
-      </div>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
+                </label>
+                <span>[[approverName(event)]]</span>
+            </div>
 
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.updated-at" auto>updated At</things-i18n-msg>
-        </label>
-        <span>[[event.updated_at]]</span>
-      </div>
-      
-      <div class="info-cell">
-        <label>
-          <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
-        </label>
-        <span>[[variables]]</span>
-      </div>
-    </div>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.created-at" auto>created At</things-i18n-msg>
+                </label>
+                <span>[[event.created_at]]</span>
+            </div>
 
-    <div class="btns">
-      <paper-button on-tap="onTapPreview">
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.updated-at" auto>updated At</things-i18n-msg>
+                </label>
+                <span>[[event.updated_at]]</span>
+            </div>
+
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
+                </label>
+                <span>[[variables]]</span>
+            </div>
+        </div>
+
+        <div class="btns">
+            <!--       <paper-button on-tap="onTapPreview">
         <things-i18n-msg msgid="button.preview" auto>preview</things-i18n-msg>
-      </paper-button>
-      <paper-button on-tap="onTapHistory" hidden="[[!isReleaseMode]]">
+      </paper-button> -->
+            <!--       <paper-button on-tap="onTapHistory" hidden="[[!isReleaseMode]]">
         <things-i18n-msg msgid="button.history" auto>history</things-i18n-msg>
-      </paper-button>
-      <paper-button class="important" on-tap="onImageDownload">
+      </paper-button> -->
+            <!--       <paper-button class="important" on-tap="onImageDownload">
         <things-i18n-msg msgid="button.image-download" auto>image download</things-i18n-msg>
-      </paper-button>
-      <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]"></iron-icon>
-        <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
-      </paper-button>
-      <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
-        <things-i18n-msg msgid="button.request-confirm" auto>request confirm</things-i18n-msg>
-      </paper-button>
-      <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
-        <things-i18n-msg msgid="button.cancel-request-confirm" auto>cancel request confirm</things-i18n-msg>
-      </paper-button>
-      <template is="dom-if" if="{{isAdminUser(globals.user)}}">
-        <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
-          <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
-        </paper-button>
-      </template>      
-    </div>
+      </paper-button> -->
+            <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]">
+                </iron-icon>
+                <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
+            </paper-button>
+            <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
+                <things-i18n-msg msgid="button.request-confirm" auto>request confirm</things-i18n-msg>
+            </paper-button>
+            <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
+                <things-i18n-msg msgid="button.cancel-request-confirm" auto>cancel request confirm</things-i18n-msg>
+            </paper-button>
+            <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
+                <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
+            </paper-button>
 
-    <things-ajax 
-      id="version-up"
-      resource-url="labels/:id/version_up"
-      method="POST"
-      content-type="application/json">
-    </things-ajax>
+            <template is="dom-if" if="{{isAdminUser(globals.user)}}">
+                <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
+                    <things-i18n-msg msgid="button.confirm" auto>confirm</things-i18n-msg>
+                </paper-button>
+            </template>
+        </div>
 
-    <things-ajax 
-      id="request-confirm"
-      resource-url="labels/:id/request_approval"
-      method="PUT"
-      content-type="application/json">
-    </things-ajax>
+        <things-ajax id="version-up" resource-url="labels/:id/version_up" method="POST" content-type="application/json">
+        </things-ajax>
 
-    <things-ajax 
-      id="cancel-request-confirm"
-      resource-url="labels/:id/cancel_request_approval"
-      method="PUT"
-      content-type="application/json">
-    </things-ajax>    
+        <things-ajax id="request-confirm" resource-url="labels/:id/request_approval" method="PUT" content-type="application/json">
+        </things-ajax>
 
-    <things-ajax 
-      id="confirm"
-      resource-url="labels/:id/release"
-      method="PUT"
-      content-type="application/json">
-    </things-ajax>
-  </template>
+        <things-ajax id="cancel-request-confirm" resource-url="labels/:id/cancel_request_approval" method="PUT" content-type="application/json">
+        </things-ajax>
 
-  <script>
-    (function() {
-      'use strict';
+        <things-ajax id="confirm" resource-url="labels/:id/release" method="PUT" content-type="application/json">
+        </things-ajax>
 
-      Polymer({
-        is: 'things-timeline-event-info',
+        <things-ajax id="delete" resource-url="labels/:id" method="DELETE" content-type="application/json">
+        </things-ajax>
+    </template>
 
-        behaviors: [
-          Things.GlobalBehavior,
-          Things.MsgBoxBehavior
-        ],
+    <script>
+        (function() {
+            'use strict';
 
-        properties: {
-          object: {
-            notify: true
-          },
+            Polymer({
+                is: 'things-timeline-event-info',
 
-          events: {
-            notify: true
-          },
+                behaviors: [
+                    Things.GlobalBehavior,
+                    Things.MsgBoxBehavior
+                ],
 
-          event: {
-            notify: true,
-            observer: 'eventChanged'
-          },
+                properties: {
+                    object: {
+                        notify: true
+                    },
 
-          model: {
-            notify: true,
-            computed: 'evalModel(object)',
-            observer: 'onModelChange'
-          },
+                    events: {
+                        notify: true
+                    },
 
-          isHidden: {
-            type: Boolean
-          },
+                    event: {
+                        notify: true,
+                        observer: 'eventChanged'
+                    },
 
-          /**
-           * Edit Status
-           */
-          isEditMode: {
-            type: Boolean
-          },
+                    model: {
+                        notify: true,
+                        computed: 'evalModel(object)',
+                        observer: 'onModelChange'
+                    },
 
-          /**
-           * Approval Status
-           */
-          isApprovalMode: {
-            type: Boolean
-          },
+                    isHidden: {
+                        type: Boolean
+                    },
 
-          /**
-           * Release Status
-           */
-          isReleaseMode: {
-            type: Boolean
-          }
-        },
+                    /**
+                     * Edit Status
+                     */
+                    isEditMode: {
+                        type: Boolean,
+                        value: false
+                    },
 
-        listeners : {
-          'request-confirm.things-ajax-response' : 'refreshCurrentEvent',
-          'cancel-request-confirm.things-ajax-response' : 'refreshCurrentEvent',
-          'confirm.things-ajax-response' : 'refreshCurrentEvent',
-          'version-up.things-ajax-response' : 'refreshCurrentEvent'
-        },
+                    /**
+                     * Approval Status
+                     */
+                    isApprovalMode: {
+                        type: Boolean,
+                        value: false
+                    },
 
-        /**
-         * 로그인 사용자가 admin 권한이 있는지 체크 
-         */
-        isAdminUser: function(user) {
-          return (user && user.admin_flag);
-        },
+                    /**
+                     * Release Status
+                     */
+                    isReleaseMode: {
+                        type: Boolean,
+                        value: false
+                    }
+                },
 
-        /**
-         * 승인자 이름  
-         */
-        approverName: function(event) {
-          return event && event.approver ? event.approver.name : '';
-        },
+                listeners: {
+                    'request-confirm.things-ajax-response': 'refreshCurrentEvent',
+                    'cancel-request-confirm.things-ajax-response': 'refreshCurrentEvent',
+                    'confirm.things-ajax-response': 'refreshCurrentEvent',
+                    'version-up.things-ajax-response': 'refreshCurrentEvent',
+                    'delete.things-ajax-response': '_onDeleteLabelSuccess'
+                },
 
-        computeImgSrc: function(src) {
-          var src = `${this.globals.baseUrl}/download/${src}`;
-          if(this.event) {
-             src += '?dc=' + this.event.updated_at
-          }
+                /**
+                 * 로그인 사용자가 admin 권한이 있는지 체크
+                 */
+                isAdminUser: function(user) {
+                    return (user && user.admin_flag);
+                },
 
-          return src;
-        },
+                /**
+                 * 승인자 이름
+                 */
+                approverName: function(event) {
+                    return event && event.approver ? event.approver.name : '';
+                },
 
-        evalModel: function(object) {
-          if(object && object.model)
-            return eval("(" + object.model + ")");
+                computeImgSrc: function(src) {
+                    var src = `${this.globals.baseUrl}/download/${src}`;
+                    if (this.event) {
+                        src += '?dc=' + this.event.updated_at
+                    }
 
-          return { components: [], variables: [] };
-        },
+                    return src;
+                },
 
-        /**
-         * 모델 변경시 
-         */
-        onModelChange: function(model) {
-          if(!model.variables)
-            return;
+                evalModel: function(object) {
+                    if (object && object.model)
+                        return eval("(" + object.model + ")");
 
-          this.variables = model.variables.map(function(variable) { return variable.name }).join(', ');
-        },
+                    return {
+                        components: [],
+                        variables: []
+                    };
+                },
 
-        /**
-         * version changed
-         */
-        eventChanged: function(value) {
-          if(value) {
-            this.isEditMode = (value.status == 'EDIT');
-            this.isApprovalMode = (value.status == 'APPROVAL');
-            this.isReleaseMode = (value.status == 'RELEASED');
-          }
-        },
+                /**
+                 * 모델 변경시
+                 */
+                onModelChange: function(model) {
+                    if (!model.variables)
+                        return;
 
-        /**
-         * format Date Data
-         */
-        formatEventDate: function(date) {
-          if(!date) {
-            return date;
-          } else if(typeof(date) == 'number') {
-            return new Date(date).toISOString().substring(0, 10)
-          } else if(typeof(date) == 'object') {
-            return date.toISOString().substring(0, 10)
-          } else {
-            return date;
-          }
-        },
+                    this.variables = model.variables.map(function(variable) {
+                        return variable.name
+                    }).join(', ');
+                },
 
-        /**
-         * Preview  
-         */
-        onTapPreview: function(e) {
-          page(`/preview/${this.event.id}`);
-        },
+                /**
+                 * version changed
+                 */
+                eventChanged: function(value) {
+                    if (value) {
+                        this.isEditMode = (value.status == 'EDIT');
+                        this.isApprovalMode = (value.status == 'APPROVAL');
+                        this.isReleaseMode = (value.status == 'RELEASED');
+                    }
+                },
 
-        /**
-         * 인쇄 이력  
-         */
-        onTapHistory: function(e) {
-          page(`/print-history/${this.event.id}`);
-        },
+                /**
+                 * format Date Data
+                 */
+                formatEventDate: function(date) {
+                    if (!date) {
+                        return date;
+                    } else if (typeof(date) == 'number') {
+                        return new Date(date).toISOString().substring(0, 10)
+                    } else if (typeof(date) == 'object') {
+                        return date.toISOString().substring(0, 10)
+                    } else {
+                        return date;
+                    }
+                },
 
-        /**
-         * 이미지 다운로드 
-         */
-        onImageDownload: function(e) {
-          var baseUrl = this.get('globals.baseUrl');
-          window.location = baseUrl + '/download/' + this.event.attachment_id;
-        },
+                /**
+                 * Preview
+                 */
+                // onTapPreview: function(e) {
+                //   page(`/preview/${this.event.id}`);
+                // },
 
-        /**
-         * 승인 요청  
-         */
-        onTapRequestConfirm: function(e) {
-          this.doTransaction(Things.DataGlobal.t('text.want-to-request-confirm'), Things.DataGlobal.t('button.request-confirm'), 'request-confirm');
-        },
+                /**
+                 * 인쇄 이력
+                 */
+                // onTapHistory: function(e) {
+                //   page(`/print-history/${this.event.id}`);
+                // },
 
-        /**
-         * 승인 요청 취소
-         */
-        onTapCancelRequestConfirm: function(e) {
-          this.doTransaction(Things.DataGlobal.t('text.want-to-cancel-request-confirm'), Things.DataGlobal.t('button.cancel-request-confirm'), 'cancel-request-confirm');
-        },
+                /**
+                 * 이미지 다운로드
+                 */
+                // onImageDownload: function(e) {
+                //   var baseUrl = this.get('globals.baseUrl');
+                //   window.location = baseUrl + '/download/' + this.event.attachment_id;
+                // },
 
-        /**
-         * 승인   
-         */
-        onTapConfirm: function(e) {
-          this.doTransaction(Things.DataGlobal.t('text.want-to-confirm'), Things.DataGlobal.t('button.confirm'), 'confirm');
-        },
+                /**
+                 * 승인 요청
+                 */
+                onTapRequestConfirm: function(e) {
+                    this.doTransaction(Things.DataGlobal.t('button.request-confirm'), Things.DataGlobal.t('text.want-to-request-confirm'), 'request-confirm');
+                },
 
-        /**
-         * 버전 업  
-         */
-        onVersionUp: function(e) {
-          this.doTransaction(Things.DataGlobal.t('text.want-to-version-up'), Things.DataGlobal.t('button.version-up'), 'version-up');
-        },
+                /**
+                 * 승인 요청 취소
+                 */
+                onTapCancelRequestConfirm: function(e) {
+                    this.doTransaction(Things.DataGlobal.t('button.cancel-request-confirm'), Things.DataGlobal.t('text.want-to-cancel-request-confirm'), 'cancel-request-confirm');
+                },
 
-        /**
-         * 트랜잭션 처리 후 현재 버전 정보 Refresh
-         */
-        refreshCurrentEvent: function(e) {
-          this.event = e.detail;
-          this.object = e.detail;
-          page(`/info/${e.detail.id}`);
-        },
+                /**
+                 * 승인
+                 */
+                onTapConfirm: function(e) {
+                    this.doTransaction(Things.DataGlobal.t('button.confirm'), Things.DataGlobal.t('text.want-to-confirm'), 'confirm');
+                },
 
-        /**
-         * 트랜잭션 처리 
-         */
-        doTransaction: function(tranTitle, tranMsg, ajaxId) {
-          var me = this;
+                /**
+                 * 버전 업
+                 */
+                onVersionUp: function(e) {
+                    var eiditingEvents = this.events.filter(function(event) {
+                        return event.status.toLowerCase() !== 'released'
+                    });
+                    if (eiditingEvents && eiditingEvents.length == 0) {
+                        this.doTransaction(Things.DataGlobal.t('button.version-up'), Things.DataGlobal.t('text.want-to-version-up'), 'version-up');
+                    } else {
+                        this.openConfirmMsg({
+                            type: 'warning',
+                            title: Things.DataGlobal.t('button.version-up'),
+                            text: Things.DataGlobal.t('text.can-not-version-up')
+                        });
+                    }
 
-          this.openConfirmMsg({
-            type : 'info',
-            title : tranTitle,
-            text : tranMsg,
-            showCancelButton: true
-          }, function() {
-            var versionUpAjax = me.$[ajaxId];
-            versionUpAjax.resourceId = me.event.id;
-            versionUpAjax.generateRequest();
-          });
-        }
-      });
-    })();
-  </script>
+                },
+
+                /**
+                 * 트랜잭션 처리 후 현재 버전 정보 Refresh
+                 */
+                refreshCurrentEvent: function(e) {
+                    this.event = e.detail;
+                    this.object = e.detail;
+                    page(`/info/${e.detail.id}`);
+                },
+
+                /**
+                 * 트랜잭션 처리
+                 */
+                doTransaction: function(tranTitle, tranMsg, ajaxId) {
+                    var me = this;
+
+                    this.openConfirmMsg({
+                        type: 'info',
+                        title: tranTitle,
+                        text: tranMsg,
+                        showCancelButton: true
+                    }, function() {
+                        var versionUpAjax = me.$[ajaxId];
+                        versionUpAjax.resourceId = me.event.id;
+                        versionUpAjax.generateRequest();
+                    });
+                },
+                /**
+                 * localhost인지 아닌지에 따라 Develop mode인지 판단
+                 */
+                isDevelopMode: function() {
+                    return window.location.hostname == 'localhost';
+                },
+                /**
+                 * 선택된 버전 삭재
+                 */
+                onTapDelete: function(e) {
+                    this.doTransaction(Things.DataGlobal.t('button.delete'), Things.DataGlobal.t('text.sure-to-delete'), 'delete');
+                },
+                /**
+                 * 라벨 삭제 완료 후
+                 */
+                _onDeleteLabelSuccess: function(event) {
+                    var oldGroup = this.group
+                    this.group = null;
+                    this.group = oldGroup;
+                    this.object = this.events[1];
+                    this.event = this.events[1];
+
+                    // 1. 라벨 삭제 후 같은 이름의 라벨이 존재하는 경우
+                    if (this.event) {
+                        page(`/info/${this.event.id}`);
+                        // 2. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우
+                    } else {
+                        // FIXME /list/groupId 페이지를 Refresh
+                        page(`/list/${this.group}`);
+                        // window.location.href = '/';
+                    }
+                },
+            });
+        })();
+
+    </script>
 </dom-module>
