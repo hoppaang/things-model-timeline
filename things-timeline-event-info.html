@@ -383,6 +383,10 @@
                     this.doTransaction(Things.DataGlobal.t('button.cancel-request-confirm'), Things.DataGlobal.t('text.want-to-cancel-request-confirm'), 'cancel-request-confirm');
                 },
 
+                onLabelCopy: function() {
+                    this.$['label-copy'].openCopyDialog();
+                },
+
                 /**
                  * 승인
                  */
