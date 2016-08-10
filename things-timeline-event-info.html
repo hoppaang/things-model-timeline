@@ -138,15 +138,16 @@
         </div>
 
         <div class="btns">
-            <!--       <paper-button on-tap="onTapPreview">
-        <things-i18n-msg msgid="button.preview" auto>preview</things-i18n-msg>
-      </paper-button> -->
-            <!--       <paper-button on-tap="onTapHistory" hidden="[[!isReleaseMode]]">
-        <things-i18n-msg msgid="button.history" auto>history</things-i18n-msg>
-      </paper-button> -->
-            <!--       <paper-button class="important" on-tap="onImageDownload">
-        <things-i18n-msg msgid="button.image-download" auto>image download</things-i18n-msg>
-      </paper-button> -->
+            <!--paper-button on-tap="onTapPreview">
+                <things-i18n-msg msgid="button.preview" auto>preview</things-i18n-msg>
+            </paper-button>
+            <paper-button on-tap="onTapHistory" hidden="[[!isReleaseMode]]">
+                <things-i18n-msg msgid="button.history" auto>history</things-i18n-msg>
+            </paper-button>
+            <paper-button class="important" on-tap="onImageDownload">
+                <things-i18n-msg msgid="button.image-download" auto>image download</things-i18n-msg>
+            </paper-button-->
+
             <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]">
                 </iron-icon>
                 <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
@@ -158,7 +159,7 @@
                 <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
             </paper-button>
             <paper-button on-tap="onLabelCopy">
-                <things-i18n-msg msgid="button.label-copy" auto>label copy</things-i18n-msg>
+                <things-i18n-msg msgid="button.copy" auto>copy</things-i18n-msg>
             </paper-button>
             <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
                 <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
@@ -376,24 +377,24 @@
                 /**
                  * Preview
                  */
-                // onTapPreview: function(e) {
-                //   page(`/preview/${this.event.id}`);
-                // },
+                /*onTapPreview: function(e) {
+                  page(`/preview/${this.event.id}`);
+                },*/
 
                 /**
                  * 인쇄 이력
                  */
-                // onTapHistory: function(e) {
-                //   page(`/print-history/${this.event.id}`);
-                // },
+                /*onTapHistory: function(e) {
+                  page(`/print-history/${this.event.id}`);
+                },*/
 
                 /**
                  * 이미지 다운로드
                  */
-                // onImageDownload: function(e) {
-                //   var baseUrl = this.get('globals.baseUrl');
-                //   window.location = baseUrl + '/download/' + this.event.attachment_id;
-                // },
+                /*onImageDownload: function(e) {
+                  var baseUrl = this.get('globals.baseUrl');
+                  window.location = baseUrl + '/download/' + this.event.attachment_id;
+                },*/
 
                 /**
                  * 승인 요청
@@ -486,16 +487,13 @@
                     } else {
                         this.object = this.events[1];
                     }
-                    // this.event = this.events[1];
 
                     // 1. 라벨 삭제 후 같은 이름의 라벨이 존재하는 경우
                     if (this.events.length > 1) {
                         page(`/info/${this.object.id}`);
-                        // 2. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우
+                    // 2. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우
                     } else {
-                        // FIXME /list/groupId 페이지를 Refresh
                         page(`/list/${this.object.label_group_id}`);
-                        // window.location.href = '/';
                     }
                 },
             });
