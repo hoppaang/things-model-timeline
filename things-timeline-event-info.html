@@ -171,6 +171,9 @@
             <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
                 <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
             </paper-button>
+            <paper-button on-tap="onLabelCopy">
+                <things-i18n-msg msgid="button.label-copy" auto>label copy</things-i18n-msg>
+            </paper-button>
             <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
                 <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
             </paper-button>
@@ -181,6 +184,8 @@
                 </paper-button>
             </template>
         </div>
+
+        <things-label-copy id="label-copy" object="{{object}}" groups="{{groups}}"></things-label-copy>
 
         <things-ajax id="version-up" resource-url="labels/:id/version_up" method="POST" content-type="application/json">
         </things-ajax>
@@ -212,6 +217,10 @@
 
                 properties: {
                     object: {
+                        notify: true
+                    },
+
+                    groups: {
                         notify: true
                     },
 
