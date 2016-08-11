@@ -132,11 +132,17 @@
                 ],
 
                 onChangeEvent: function(after) {
+                    if(this.seq<0) {
+                        this.seq =0;
+                        return
+                    }
                     this._setEvent(this.events[after]);
                     this.labelId = this.event.id;
                 },
 
                 onEventsChange: function(events) {
+                    
+
                     if (events && events.length > 0) {
                         this._setEvent(events[this.seq]);
                     } else {
