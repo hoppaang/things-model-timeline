@@ -37,7 +37,7 @@
             }
 
             paper-item[aria-selected='true']::shadow .timecell,
-            paper-item[focused]::shadow .timecell {
+            paper-item[aria-selected='true']::shadow .timecell {
                 @apply(--things-timecell-active)
             }
 
@@ -54,7 +54,7 @@
 
         <paper-listbox id="timeline" selected="{{seq}}">
             <template is="dom-repeat" items="[[events]]">
-                <paper-item>
+                <paper-item on-tap="onTapEvent">
                     <things-timeline-event event="[[item]]">
                     </things-timeline-event>
                 </paper-item>
@@ -77,27 +77,7 @@
                     resourceUrl: {
                         tpe: String
                     },
-                    // // version up url
-                    // versionUpUrl: {
-                    //     type: String
-                    // },
-                    // // request approval url
-                    // requestApprovalUrl: {
-                    //     type: String
-                    // },
-                    // // cancel request approval url
-                    // cancelRequestApprovalUrl: {
-                    //     type: String
-                    // },
-                    // // release url
-                    // releaseUrl: {
-                    //     type: String
-                    // },
-                    // // delete url
-                    // deleteUrl: {
-                    //     type: String
-                    // },
-                    // label
+
                     object: {
                         notify: true
                     },
@@ -132,16 +112,24 @@
                 ],
 
                 onChangeEvent: function(after) {
-                    if(this.seq<0) {
-                        this.seq =0;
+                    if (this.seq < 0) {
+                        this.seq = 0;
                         return
                     }
+
+                    if (!this.events || this.events.length == 0) return
+
                     this._setEvent(this.events[after]);
                     this.labelId = this.event.id;
                 },
 
+                onTapEvent: function(e) {
+                    var label = e.model.__data__.item;
+                    this.fire("things-timeline-event-tap", label);
+                },
+
                 onEventsChange: function(events) {
-                    
+
 
                     if (events && events.length > 0) {
                         this._setEvent(events[this.seq]);
