@@ -307,7 +307,7 @@
                  * 로그인 사용자가 admin 권한이 있는지 체크
                  */
                 isAdminUser: function(user) {
-                    return (user && user.admin_flag);
+                    return (user && (user.admin_flag || user.super_user));
                 },
 
                 /**
@@ -491,7 +491,7 @@
                     // 1. 라벨 삭제 후 같은 이름의 라벨이 존재하는 경우
                     if (this.events.length > 1) {
                         page(`/info/${this.object.id}`);
-                    // 2. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우
+                        // 2. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우
                     } else {
                         page(`/list/${this.object.label_group_id}`);
                     }
