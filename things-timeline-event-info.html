@@ -107,13 +107,14 @@
                 </label>
                 <span>[[event.updater.name]]</span>
             </div>
-
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
-                </label>
-                <span>[[approverName(event)]]</span>
-            </div>
+            <template is="dom-if" if={{approverName(event)}}>
+                <div class="info-cell">
+                    <label>
+                        <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
+                    </label>
+                    <span>[[approverName(event)]]</span>
+                </div>
+            </template>
 
             <div class="info-cell">
                 <label>
@@ -135,6 +136,14 @@
                 </label>
                 <span>[[variables]]</span>
             </div>
+            <template is="dom-if" if={{event.released_at}}>
+                <div class="info-cell">
+                    <label>
+                        <things-i18n-msg msgid="label.released_at" auto>Released At</things-i18n-msg>
+                    </label>
+                    <span>[[event.released_at]]</span>
+                </div>
+            </template>
         </div>
 
         <div class="btns">
@@ -147,25 +156,26 @@
             <paper-button class="important" on-tap="onImageDownload">
                 <things-i18n-msg msgid="button.image-download" auto>image download</things-i18n-msg>
             </paper-button-->
+            <template is="dom-if" if="{{isDesignUser(globals.user)}}">
+                <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]">
+                    </iron-icon>
+                    <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
+                </paper-button>
+                <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
+                    <things-i18n-msg msgid="button.request-release" auto>request release</things-i18n-msg>
+                </paper-button>
+                <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
+                    <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
+                </paper-button>
+                <paper-button on-tap="onLabelCopy">
+                    <things-i18n-msg msgid="button.copy" auto>copy</things-i18n-msg>
+                </paper-button>
+                <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
+                    <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
+                </paper-button>
+            </template>
 
-            <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]">
-                </iron-icon>
-                <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
-            </paper-button>
-            <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
-                <things-i18n-msg msgid="button.request-release" auto>request release</things-i18n-msg>
-            </paper-button>
-            <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
-                <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
-            </paper-button>
-            <paper-button on-tap="onLabelCopy">
-                <things-i18n-msg msgid="button.copy" auto>copy</things-i18n-msg>
-            </paper-button>
-            <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
-                <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
-            </paper-button>
-
-            <template is="dom-if" if="{{isAdminUser(globals.user)}}">
+            <template is="dom-if" if="{{isDeployUser(globals.user)}}">
                 <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
                     <things-i18n-msg msgid="button.release" auto>release</things-i18n-msg>
                 </paper-button>
@@ -304,10 +314,16 @@
                     this.deleteUrl = resourceUrl + '/:id'
                 },
                 /**
-                 * 로그인 사용자가 admin 권한이 있는지 체크
+                 * 로그인 사용자가 Designer인지
                  */
-                isAdminUser: function(user) {
-                    return (user && (user.admin_flag || user.super_user));
+                isDesignUser: function(user) {
+                    return (user && (this.isDeployUser(user) || user.designer_flag));
+                },
+                /**
+                 * 로그인 사용자가 Deploy 권한이 있는지 체크
+                 */
+                isDeployUser: function(user) {
+                    return (user && (user.admin_flag || user.super_user || user.deployer_flag));
                 },
 
                 /**
