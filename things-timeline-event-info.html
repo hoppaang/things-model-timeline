@@ -132,13 +132,6 @@
                 </label>
                 <span>[[event.updated_at]]</span>
             </div>
-
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
-                </label>
-                <span>[[variables]]</span>
-            </div>
             <template is="dom-if" if={{event.released_at}}>
                 <div class="info-cell">
                     <label>
@@ -147,6 +140,12 @@
                     <span>[[event.released_at]]</span>
                 </div>
             </template>
+            <div class="info-cell">
+                <label>
+                    <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
+                </label>
+                <span>[[variables]]</span>
+            </div>
         </div>
 
         <div class="btns">
