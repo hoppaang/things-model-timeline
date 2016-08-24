@@ -91,7 +91,10 @@
                 <label>
                     <things-i18n-msg msgid="label.status" auto>status</things-i18n-msg>
                 </label>
-                <span>[[event.status]]</span>
+                <span>
+                    <things-i18n-msg msgid="[[event.status]]" msg="{{lStatus}}" auto hidden>[[event.status]]</things-i18n-msg>
+                    [[lStatus]]
+                </span>
             </div>
 
             <div class="info-cell">
@@ -179,13 +182,20 @@
                 <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
                     <things-i18n-msg msgid="button.release" auto>release</things-i18n-msg>
                 </paper-button>
+                <paper-button on-tap="onTapRename">
+                    <things-i18n-msg msgid="button.rename" auto>rename</things-i18n-msg>
+                </paper-button>
             </template>
         </div>
 
-
-        <things-label-copy id="label-copy" object="{{object}}" groups="{{groups}}"></things-label-copy>
+        <things-i18n-msg msgid="label.rename" msg = {{lRename}} auto hidden>Rename</things-i18n-msg>
+        <things-label-copy id="label-copy" object="[[object]]" groups="[[groups]]"></things-label-copy>        
+        <things-new-dialog id="rename-dialog" title= "[[lRename]]" groups="[[groups]]" group="[[object.label_group_id]]" title="[[lChangeInfo]]" group-disabled="true" description ="[[object.description]]" ></things-new-dialog>
 
         <things-ajax id="version-up" resource-url="[[versionUpUrl]]" method="POST" content-type="application/json">
+        </things-ajax>
+
+        <things-ajax id="save-label" resource-url="[[saveUrl]]" resource-id = "[[object.id]]" method="PUT" content-type="application/json">
         </things-ajax>
 
         <things-ajax id="request-confirm" resource-url="[[requestApprovalUrl]]" method="PUT" content-type="application/json">
@@ -295,9 +305,10 @@
                     'cancel-request-confirm.things-ajax-response': 'refreshCurrentEvent',
                     'confirm.things-ajax-response': 'refreshCurrentEvent',
                     'version-up.things-ajax-response': 'refreshCurrentEvent',
-                    'delete.things-ajax-response': '_onDeleteLabelSuccess'
+                    'delete.things-ajax-response': '_onDeleteLabelSuccess',
+                    'rename-dialog.iron-overlay-closed' : 'onDialogClosed',
+                    'save-label.things-ajax-response' : 'refreshCurrentEvent'
                 },
-
                 /**
                  * compute all url
                  */
@@ -306,12 +317,14 @@
                     this.versionUpUrl = resourceUrl + '/:id/version_up';
                     // request approval url
                     this.requestApprovalUrl = resourceUrl + '/:id/request_approval'
-                        // cancel request approval url
+                    // cancel request approval url
                     this.cancelRequestApprovalUrl = resourceUrl + '/:id/cancel_request_approval'
-                        // release url
+                    // release url
                     this.releaseUrl = resourceUrl + '/:id/release'
-                        // delete url
-                    this.deleteUrl = resourceUrl + '/:id'
+                    // delete url
+                    this.deleteUrl = resourceUrl + '/:id',
+                    // save url
+                    this.saveUrl = resourceUrl+'/:id'
                 },
                 /**
                  * 로그인 사용자가 Designer인지
@@ -412,6 +425,24 @@
                   window.location = baseUrl + '/download/' + this.event.attachment_id;
                 },*/
 
+                /**
+                 * 이름 수정
+                 */
+                onTapRename: function(e){
+                    this.$['rename-dialog'].show();
+                },
+                /**
+                 * 이름 수정 저장 시
+                 */
+                onDialogClosed: function(e){
+                    var renameObject = this.$['rename-dialog'].object;
+
+                    if(e.detail.confirmed && renameObject) {
+                        var saveRequesst = this.$['save-label'];
+                        saveRequesst.body = {description: renameObject.description}
+                        saveRequesst.generateRequest();
+                  }
+                },
                 /**
                  * 승인 요청
                  */
