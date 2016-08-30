@@ -85,7 +85,7 @@
         </style>
 
         <div class="event-info">
-            <img width="80%" src$="[[computeImgSrc(event.attachment_id)]]" class="shadow" />
+            <img width="80%" src$="[[computeImgSrc(globals.baseUrl,event.attachment_id)]]" class="shadow" />
 
             <div class="info-cell">
                 <label>
@@ -189,7 +189,7 @@
 
         <things-i18n-msg msgid="label.rename" msg = {{lRename}} auto hidden>Rename</things-i18n-msg>
         <things-label-copy id="label-copy" object="[[object]]" groups="[[groups]]"></things-label-copy>        
-        <things-new-dialog id="rename-dialog" title= "[[lRename]]" groups="[[groups]]" group="[[object.label_group_id]]" title="[[lChangeInfo]]" group-disabled="true" description ="[[object.description]]" ></things-new-dialog>
+        <things-new-dialog id="renameDialog" title= "[[lRename]]" groups="[[groups]]" group="[[object.label_group_id]]" title="[[lChangeInfo]]" group-disabled="true" description ="[[object.description]]" on-things-new-dialog-closed="onDialogClosed"></things-new-dialog>
 
         <things-ajax id="version-up" resource-url="[[versionUpUrl]]" method="POST" content-type="application/json">
         </things-ajax>
@@ -305,7 +305,7 @@
                     'confirm.things-ajax-response': 'refreshCurrentEvent',
                     'version-up.things-ajax-response': 'refreshCurrentEvent',
                     'delete.things-ajax-response': '_onDeleteLabelSuccess',
-                    'rename-dialog.iron-overlay-closed' : 'onDialogClosed',
+                    // 'renameDialog.things-new-dialog-closed' : 'onDialogClosed',
                     'save-label.things-ajax-response' : 'refreshCurrentEvent'
                 },
                 /**
@@ -345,8 +345,8 @@
                     return event && event.approver ? event.approver.name : '';
                 },
 
-                computeImgSrc: function(src) {
-                    var src = `${this.globals.baseUrl}/download/${src}`;
+                computeImgSrc: function(baseUrl, src) {
+                    var src = `${baseUrl}/download/${src}`;
                     if (this.event) {
                         src += '?dc=' + this.event.updated_at
                     }
@@ -428,13 +428,14 @@
                  * 이름 수정
                  */
                 onTapRename: function(e){
-                    this.$['rename-dialog'].show();
+                    this.$['renameDialog'].show();
                 },
                 /**
                  * 이름 수정 저장 시
                  */
                 onDialogClosed: function(e){
-                    var renameObject = this.$['rename-dialog'].object;
+                    console.log('change');
+                    var renameObject = this.$['renameDialog'].object;
 
                     if(e.detail.confirmed && renameObject) {
                         var saveRequesst = this.$['save-label'];
