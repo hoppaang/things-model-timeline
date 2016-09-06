@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 
+<link rel="import" href="../iron-signals/iron-signals.html">
 <link rel="import" href="../paper-button/paper-button.html">
 
 <link rel="import" href="../things-ajax/things-ajax.html">
@@ -7,544 +8,572 @@
 <link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
+<!--
+  이벤트 정보 페이지 
+-->
+
 <dom-module id="things-timeline-event-info">
-    <template>
-        <style>
-            :host {
-                display: block;
-                background-color: var(--things-white-color);
-            }
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color: var(--things-white-color);
+      }
 
-            .event-info {
-                margin: auto;
-                padding: 20px 10px 10px 10px;
-                max-width: 95%;
-                text-align: center;
-            }
+      .event-info {
+        margin: auto;
+        padding: 20px 10px 10px 10px;
+        max-width: 95%;
+        text-align: center;
+      }
 
-            .event-info img {
-                border-radius: 7px;
-                border: 1px solid rgba(0, 0, 0, .1);
-                margin-bottom: 10px;
-                max-width: 100%;
-                max-height: 70%;
-            }
+      .event-info img {
+        border-radius: 7px;
+        border: 1px solid rgba(0, 0, 0, .1);
+        margin-bottom: 10px;
+        max-width: 100%;
+        max-height: 70%;
+      }
 
-            .event-info div {
-                padding: 3px 0;
-                overflow: hidden
-            }
+      .event-info div {
+        padding: 3px 0;
+        overflow: hidden
+      }
 
-            .event-info div label {
-                width: 25%;
-                float: left;
-                text-align: right;
-                font-size: 12px;
-                color: #999;
-                line-height: 1.6;
-            }
+      .event-info div label {
+        width: 25%;
+        float: left;
+        text-align: right;
+        font-size: 12px;
+        color: #999;
+        line-height: 1.6;
+      }
 
-            .event-info div span {
-                width: 71%;
-                float: left;
-                padding-left: 1%;
-                text-align: left;
-                font-size: 12px;
-                line-height: 1.5
-            }
+      .event-info div span {
+        width: 71%;
+        float: left;
+        padding-left: 1%;
+        text-align: left;
+        font-size: 12px;
+        line-height: 1.5
+      }
 
-            .btns {
-                margin-top: 15px;
-                text-align: center;
-            }
+      .btns {
+        margin-top: 15px;
+        text-align: center;
+      }
 
-            #preview {
-                height: 300px;
-                @apply(--layout-vertical);
-            }
+      #preview {
+        height: 300px;
+        @apply(--layout-vertical);
+      }
 
-            things-scene-view {
-                @apply(--layout-flex)
-            }
+      things-scene-view {
+        @apply(--layout-flex)
+      }
 
-            paper-button {
-                @apply(--things-button)
-            }
+      paper-button {
+        @apply(--things-button)
+      }
 
-            paper-button.important {
-                @apply(--things-button-important)
-            }
+      paper-button.important {
+        @apply(--things-button-important)
+      }
 
-            @media only all and (max-width:600px) {
-                .btns paper-button {
-                    padding: 9px 7px 7px 7px;
-                    margin: 0 0 5px 0
-                }
-            }
+      @media only all and (max-width:600px) {
+        .btns paper-button {
+          padding: 9px 7px 7px 7px;
+          margin: 0 0 5px 0
+        }
+      }
+    </style>
 
-        </style>
+    <div class="event-info">
+      <img width="80%" src$="[[computeImgSrc(globals.baseUrl,event.attachment_id)]]" class="shadow" />
 
-        <div class="event-info">
-            <img width="80%" src$="[[computeImgSrc(globals.baseUrl,event.attachment_id)]]" class="shadow" />
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.status" auto>status</things-i18n-msg>
+        </label>
+        <span>
+          <things-i18n-msg msgid="[[event.status]]" msg="{{lStatus}}" auto hidden>[[event.status]]</things-i18n-msg>
+          [[lStatus]]
+        </span>
+      </div>
 
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.status" auto>status</things-i18n-msg>
-                </label>
-                <span>
-                    <things-i18n-msg msgid="[[event.status]]" msg="{{lStatus}}" auto hidden>[[event.status]]</things-i18n-msg>
-                    [[lStatus]]
-                </span>
-            </div>
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.creator" auto>creator</things-i18n-msg>
+        </label>
+        <span>[[event.creator.name]]</span>
+      </div>
 
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.creator" auto>creator</things-i18n-msg>
-                </label>
-                <span>[[event.creator.name]]</span>
-            </div>
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.updater" auto>updater</things-i18n-msg>
+        </label>
+        <span>[[event.updater.name]]</span>
+      </div>
 
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.updater" auto>updater</things-i18n-msg>
-                </label>
-                <span>[[event.updater.name]]</span>
-            </div>
-            <template is="dom-if" if={{approverName(event)}}>
-                <div class="info-cell">
-                    <label>
-                        <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
-                    </label>
-                    <span>[[approverName(event)]]</span>
-                </div>
-            </template>
-
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.created-at" auto>created At</things-i18n-msg>
-                </label>
-                <span>[[event.created_at]]</span>
-            </div>
-
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.updated-at" auto>updated At</things-i18n-msg>
-                </label>
-                <span>[[event.updated_at]]</span>
-            </div>
-            <template is="dom-if" if={{event.released_at}}>
-                <div class="info-cell">
-                    <label>
-                        <things-i18n-msg msgid="label.released_at" auto>Released At</things-i18n-msg>
-                    </label>
-                    <span>[[event.released_at]]</span>
-                </div>
-            </template>
-            <div class="info-cell">
-                <label>
-                    <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
-                </label>
-                <span>[[variables]]</span>
-            </div>
+      <template is="dom-if" if={{approverName(event)}}>
+        <div class="info-cell">
+          <label>
+            <things-i18n-msg msgid="label.confirmer" auto>confirmer</things-i18n-msg>
+          </label>
+          <span>[[approverName(event)]]</span>
         </div>
+      </template>
 
-        <div class="btns">
-            <!--paper-button on-tap="onTapPreview">
-                <things-i18n-msg msgid="button.preview" auto>preview</things-i18n-msg>
-            </paper-button>
-            <paper-button on-tap="onTapHistory" hidden="[[!isReleaseMode]]">
-                <things-i18n-msg msgid="button.history" auto>history</things-i18n-msg>
-            </paper-button>
-            <paper-button class="important" on-tap="onImageDownload">
-                <things-i18n-msg msgid="button.image-download" auto>image download</things-i18n-msg>
-            </paper-button-->
-            <template is="dom-if" if="{{isDesignUser(globals.user)}}">
-                <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]">
-                    </iron-icon>
-                    <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
-                </paper-button>
-                <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
-                    <things-i18n-msg msgid="button.request-release" auto>request release</things-i18n-msg>
-                </paper-button>
-                <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
-                    <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
-                </paper-button>
-                <paper-button on-tap="onLabelCopy">
-                    <things-i18n-msg msgid="button.copy" auto>copy</things-i18n-msg>
-                </paper-button>
-                <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
-                    <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
-                </paper-button>
-            </template>
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.created-at" auto>created At</things-i18n-msg>
+        </label>
+        <span>[[event.created_at]]</span>
+      </div>
 
-            <template is="dom-if" if="{{isDeployUser(globals.user)}}">
-                <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
-                    <things-i18n-msg msgid="button.release" auto>release</things-i18n-msg>
-                </paper-button>
-                <paper-button on-tap="onTapRename">
-                    <things-i18n-msg msgid="button.rename" auto>rename</things-i18n-msg>
-                </paper-button>
-            </template>
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.updated-at" auto>updated At</things-i18n-msg>
+        </label>
+        <span>[[event.updated_at]]</span>
+      </div>
+
+      <template is="dom-if" if={{event.released_at}}>
+        <div class="info-cell">
+          <label>
+            <things-i18n-msg msgid="label.released_at" auto>Released At</things-i18n-msg>
+          </label>
+          <span>[[event.released_at]]</span>
         </div>
+      </template>
 
-        <things-i18n-msg msgid="label.rename" msg = {{lRename}} auto hidden>Rename</things-i18n-msg>
-        <things-label-copy id="label-copy" object="[[object]]" groups="[[groups]]"></things-label-copy>        
-        <things-new-dialog id="renameDialog" title= "[[lRename]]" groups="[[groups]]" group="[[object.label_group_id]]" title="[[lChangeInfo]]" group-disabled="true" description ="[[object.description]]" on-things-new-dialog-closed="onDialogClosed"></things-new-dialog>
+      <div class="info-cell">
+        <label>
+          <things-i18n-msg msgid="label.variables" auto>variables</things-i18n-msg>
+        </label>
+        <span>[[variables]]</span>
+      </div>
+    </div>
 
-        <things-ajax id="version-up" resource-url="[[versionUpUrl]]" method="POST" content-type="application/json">
-        </things-ajax>
+    <div class="btns">
+      <template is="dom-if" if="{{isDesignUser(globals.user)}}">
+        <paper-button on-tap="onVersionUp" hidden="[[!isReleaseMode]]">
+          <things-i18n-msg msgid="button.version-up" auto>version up</things-i18n-msg>
+        </paper-button>
+        <paper-button on-tap="onTapRequestConfirm" hidden="[[!isEditMode]]">
+          <things-i18n-msg msgid="button.request-release" auto>request release</things-i18n-msg>
+        </paper-button>
+        <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
+          <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
+        </paper-button>
+        <paper-button on-tap="onLabelCopy">
+          <things-i18n-msg msgid="button.copy" auto>copy</things-i18n-msg>
+        </paper-button>
+        <paper-button on-tap="onTapDelete" hidden="[[!isEditMode]]">
+          <things-i18n-msg msgid="button.delete" auto>delete</things-i18n-msg>
+        </paper-button>
+      </template>
 
-        <things-ajax id="save-label" resource-url="[[saveUrl]]" resource-id = "[[object.id]]" method="PUT" content-type="application/json">
-        </things-ajax>
+      <template is="dom-if" if="{{isDeployUser(globals.user)}}">
+        <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
+          <things-i18n-msg msgid="button.release" auto>release</things-i18n-msg>
+        </paper-button>
+        <paper-button on-tap="onTapRename">
+          <things-i18n-msg msgid="button.rename" auto>rename</things-i18n-msg>
+        </paper-button>
+      </template>
+    </div>
 
-        <things-ajax id="request-confirm" resource-url="[[requestApprovalUrl]]" method="PUT" content-type="application/json">
-        </things-ajax>
+    <things-i18n-msg msgid="label.rename" msg = {{lRename}} auto hidden>Rename</things-i18n-msg>
 
-        <things-ajax id="cancel-request-confirm" resource-url="[[cancelRequestApprovalUrl]]" method="PUT" content-type="application/json">
-        </things-ajax>
+    <things-label-copy id="label-copy" object="[[object]]" groups="[[groups]]"></things-label-copy>        
+    
+    <things-new-dialog id="renameDialog" 
+                       title= "[[lRename]]" 
+                       groups="[[groups]]" 
+                       group="[[object.label_group_id]]" 
+                       title="[[lChangeInfo]]" 
+                       group-disabled="true" 
+                       description="[[object.description]]" 
+                       on-things-new-dialog-closed="onDialogClosed">
+    </things-new-dialog>
 
-        <things-ajax id="confirm" resource-url="[[releaseUrl]]" method="PUT" content-type="application/json">
-        </things-ajax>
+    <things-ajax id="version-up" resource-url="[[versionUpUrl]]" method="POST" content-type="application/json">
+    </things-ajax>
 
-        <things-ajax id="delete" resource-url="[[deleteUrl]]" method="DELETE" content-type="application/json">
-        </things-ajax>
-    </template>
+    <things-ajax id="save-label" resource-url="[[saveUrl]]" resource-id = "[[object.id]]" method="PUT" content-type="application/json">
+    </things-ajax>
 
-    <script>
-        (function() {
-            'use strict';
+    <things-ajax id="request-confirm" resource-url="[[requestApprovalUrl]]" method="PUT" content-type="application/json">
+    </things-ajax>
 
-            Polymer({
-                is: 'things-timeline-event-info',
+    <things-ajax id="cancel-request-confirm" resource-url="[[cancelRequestApprovalUrl]]" method="PUT" content-type="application/json">
+    </things-ajax>
 
-                behaviors: [
-                    Things.GlobalBehavior,
-                    Things.MsgBoxBehavior
-                ],
+    <things-ajax id="confirm" resource-url="[[releaseUrl]]" method="PUT" content-type="application/json">
+    </things-ajax>
 
-                properties: {
-                    resourceUrl: {
-                        tpe: String,
-                        observer: 'resourceUrlChange'
-                    },
-                    // version up url
-                    versionUpUrl: {
-                        type: String
-                    },
-                    // request approval url
-                    requestApprovalUrl: {
-                        type: String
-                    },
-                    // cancel request approval url
-                    cancelRequestApprovalUrl: {
-                        type: String
-                    },
-                    // release url
-                    releaseUrl: {
-                        type: String
-                    },
-                    // delete url
-                    deleteUrl: {
-                        type: String
-                    },
-                    object: {
-                        notify: true
-                    },
+    <things-ajax id="delete" resource-url="[[deleteUrl]]" method="DELETE" content-type="application/json">
+    </things-ajax>
+  </template>
 
-                    groups: {
-                        notify: true
-                    },
+  <script>
+    (function() {
+      'use strict';
 
-                    events: {
-                        notify: true
-                    },
+      Polymer({
+        is: 'things-timeline-event-info',
 
-                    event: {
-                        notify: true,
-                        observer: 'eventChanged'
-                    },
+        behaviors: [
+          Things.GlobalBehavior,
+          Things.MsgBoxBehavior
+        ],
 
-                    model: {
-                        notify: true,
-                        computed: 'evalModel(object)',
-                        observer: 'onModelChange'
-                    },
+        properties: {
+          /**
+           * 리소스 별 (Label or Scene) 대표 URL
+           */
+          resourceUrl: {
+            type: String,
+            observer: 'resourceUrlChange'
+          },
 
-                    isHidden: {
-                        type: Boolean
-                    },
+          /**
+           * Version up url
+           */
+          versionUpUrl: {
+            type: String
+          },
+          
+          /**
+           * Request release url
+           */
+          requestApprovalUrl: {
+            type: String
+          },
+          
+          /**
+           * Cancel request release url
+           */
+          cancelRequestApprovalUrl: {
+            type: String
+          },
+          
+          /**
+           * Release url
+           */
+          releaseUrl: {
+            type: String
+          },
+          
+          /**
+           * Delete url
+           */
+          deleteUrl: {
+            type: String
+          },
+          
+          /**
+           * ?
+           */          
+          object: {
+            notify: true
+          },
 
-                    /**
-                     * Edit Status
-                     */
-                    isEditMode: {
-                        type: Boolean,
-                        value: false
-                    },
+          /**
+           * 그룹 리스트 바인딩 모델 
+           */
+          groups: {
+            notify: true
+          },
 
-                    /**
-                     * Approval Status
-                     */
-                    isApprovalMode: {
-                        type: Boolean,
-                        value: false
-                    },
+          /**
+           * 타임라인 이벤트 리스트 - Label, Scene 버전 리스트
+           */
+          events: {
+            notify: true
+          },
 
-                    /**
-                     * Release Status
-                     */
-                    isReleaseMode: {
-                        type: Boolean,
-                        value: false
-                    }
-                },
+          /**
+           * 타임라인 이벤트 리스트 중 선택된 이벤트 
+           */
+          event: {
+            notify: true,
+            observer: 'eventChanged'
+          },
 
-                listeners: {
-                    'request-confirm.things-ajax-response': 'refreshCurrentEvent',
-                    'cancel-request-confirm.things-ajax-response': 'refreshCurrentEvent',
-                    'confirm.things-ajax-response': 'refreshCurrentEvent',
-                    'version-up.things-ajax-response': 'refreshCurrentEvent',
-                    'delete.things-ajax-response': '_onDeleteLabelSuccess',
-                    // 'renameDialog.things-new-dialog-closed' : 'onDialogClosed',
-                    'save-label.things-ajax-response' : 'refreshCurrentEvent'
-                },
-                /**
-                 * compute all url
-                 */
-                resourceUrlChange: function(resourceUrl) {
-                    // version up url
-                    this.versionUpUrl = resourceUrl + '/:id/version_up';
-                    // request approval url
-                    this.requestApprovalUrl = resourceUrl + '/:id/request_approval'
-                    // cancel request approval url
-                    this.cancelRequestApprovalUrl = resourceUrl + '/:id/cancel_request_approval'
-                    // release url
-                    this.releaseUrl = resourceUrl + '/:id/release'
-                    // delete url
-                    this.deleteUrl = resourceUrl + '/:id',
-                    // save url
-                    this.saveUrl = resourceUrl+'/:id'
-                },
-                /**
-                 * 로그인 사용자가 Designer인지
-                 */
-                isDesignUser: function(user) {
-                    return (user && (this.isDeployUser(user) || user.designer_flag));
-                },
-                /**
-                 * 로그인 사용자가 Deploy 권한이 있는지 체크
-                 */
-                isDeployUser: function(user) {
-                    return (user && (user.admin_flag || user.super_user || user.deployer_flag));
-                },
+          /**
+           * 선택된 이벤트의 모델 정보 
+           */
+          model: {
+            notify: true,
+            computed: 'evalModel(object)',
+            observer: 'onModelChange'
+          },
 
-                /**
-                 * 승인자 이름
-                 */
-                approverName: function(event) {
-                    return event && event.approver ? event.approver.name : '';
-                },
+          /**
+           * Edit Status
+           */
+          isEditMode: {
+            type: Boolean,
+            value: false
+          },
 
-                computeImgSrc: function(baseUrl, src) {
-                    var src = `${baseUrl}/download/${src}`;
-                    if (this.event) {
-                        src += '?dc=' + this.event.updated_at
-                    }
+          /**
+           * Approval Status
+           */
+          isApprovalMode: {
+            type: Boolean,
+            value: false
+          },
 
-                    return src;
-                },
+          /**
+           * Release Status
+           */
+          isReleaseMode: {
+            type: Boolean,
+            value: false
+          }
+        },
 
-                evalModel: function(object) {
-                    if (object && object.model)
-                        return eval("(" + object.model + ")");
+        listeners: {
+          'request-confirm.things-ajax-response': 'refreshCurrentEvent',
+          'cancel-request-confirm.things-ajax-response': 'refreshCurrentEvent',
+          'confirm.things-ajax-response': 'refreshCurrentEvent',
+          'version-up.things-ajax-response': 'refreshCurrentEvent',
+          'delete.things-ajax-response': '_onDeleteLabelSuccess',
+          'save-label.things-ajax-response' : 'refreshCurrentEvent'
+        },
 
-                    return {
-                        components: [],
-                        variables: []
-                    };
-                },
+        /**
+         * Compute all url
+         */
+        resourceUrlChange: function(resourceUrl) {
+          // version up url
+          this.versionUpUrl = resourceUrl + '/:id/version_up';
+          // request approval url
+          this.requestApprovalUrl = resourceUrl + '/:id/request_approval'
+          // cancel request approval url
+          this.cancelRequestApprovalUrl = resourceUrl + '/:id/cancel_request_approval'
+          // release url
+          this.releaseUrl = resourceUrl + '/:id/release'
+          // delete url
+          this.deleteUrl = resourceUrl + '/:id',
+          // save url
+          this.saveUrl = resourceUrl+'/:id'
+        },
 
-                /**
-                 * 모델 변경시
-                 */
-                onModelChange: function(model) {
-                    if (!model.variables)
-                        return;
+        /**
+         * 로그인 사용자가 Designer 인지
+         */
+        isDesignUser: function(user) {
+          return (user && (this.isDeployUser(user) || user.designer_flag));
+        },
 
-                    this.variables = model.variables.map(function(variable) {
-                        return variable.name
-                    }).join(', ');
-                },
+        /**
+         * 로그인 사용자가 Deploy 권한이 있는지 체크
+         */
+        isDeployUser: function(user) {
+          return (user && (user.admin_flag || user.super_user || user.deployer_flag));
+        },
 
-                /**
-                 * version changed
-                 */
-                eventChanged: function(value) {
-                    if (value) {
-                        this.isEditMode = (value.status == 'EDIT');
-                        this.isApprovalMode = (value.status == 'APPROVAL');
-                        this.isReleaseMode = (value.status == 'RELEASED');
-                    }
-                },
+        /**
+         * 승인자 이름
+         */
+        approverName: function(event) {
+          return event && event.approver ? event.approver.name : '';
+        },
 
-                /**
-                 * format Date Data
-                 */
-                formatEventDate: function(date) {
-                    if (!date) {
-                        return date;
-                    } else if (typeof(date) == 'number') {
-                        return new Date(date).toISOString().substring(0, 10)
-                    } else if (typeof(date) == 'object') {
-                        return date.toISOString().substring(0, 10)
-                    } else {
-                        return date;
-                    }
-                },
+        /**
+         * 이미지 다운로드 URL 계산
+         */
+        computeImgSrc: function(baseUrl, src) {
+          var src = `${baseUrl}/download/${src}`;
+          if (this.event) {
+            src += '?dc=' + this.event.updated_at
+          }
 
-                /**
-                 * Preview
-                 */
-                /*onTapPreview: function(e) {
-                  page(`/preview/${this.event.id}`);
-                },*/
+          return src;
+        },
 
-                /**
-                 * 인쇄 이력
-                 */
-                /*onTapHistory: function(e) {
-                  page(`/print-history/${this.event.id}`);
-                },*/
+        /**
+         * 모델 변경시 ...
+         */
+        evalModel: function(object) {
+          if (object && object.model)
+            return eval("(" + object.model + ")");
+          else
+            return { components: [], variables: [] };
+        },
 
-                /**
-                 * 이미지 다운로드
-                 */
-                /*onImageDownload: function(e) {
-                  var baseUrl = this.get('globals.baseUrl');
-                  window.location = baseUrl + '/download/' + this.event.attachment_id;
-                },*/
+        /**
+         * 모델 변경시
+         */
+        onModelChange: function(model) {
+          if (!model.variables)
+            return;
 
-                /**
-                 * 이름 수정
-                 */
-                onTapRename: function(e){
-                    this.$['renameDialog'].show();
-                },
-                /**
-                 * 이름 수정 저장 시
-                 */
-                onDialogClosed: function(e){
-                    console.log('change');
-                    var renameObject = this.$['renameDialog'].object;
+          this.variables = model.variables.map(function(variable) {
+              return variable.name
+          }).join(', ');
+        },
 
-                    if(e.detail.confirmed && renameObject) {
-                        var saveRequesst = this.$['save-label'];
-                        saveRequesst.body = {description: renameObject.description}
-                        saveRequesst.generateRequest();
-                  }
-                },
-                /**
-                 * 승인 요청
-                 */
-                onTapRequestConfirm: function(e) {
-                    this.doTransaction(Things.DataGlobal.t('button.request-confirm'), Things.DataGlobal.t('text.want-to-request-confirm'), 'request-confirm');
-                },
+        /**
+         * Version changed
+         */
+        eventChanged: function(value) {
+          if (value) {
+            this.isEditMode = (value.status == 'EDIT');
+            this.isApprovalMode = (value.status == 'APPROVAL');
+            this.isReleaseMode = (value.status == 'RELEASED');
+          }
+        },
 
-                /**
-                 * 승인 요청 취소
-                 */
-                onTapCancelRequestConfirm: function(e) {
-                    this.doTransaction(Things.DataGlobal.t('button.cancel-request-confirm'), Things.DataGlobal.t('text.want-to-cancel-request-confirm'), 'cancel-request-confirm');
-                },
+        /**
+         * Format Date Data
+         */
+        formatEventDate: function(date) {
+          if (!date) {
+            return date;
+          } else if (typeof(date) == 'number') {
+            return new Date(date).toISOString().substring(0, 10)
+          } else if (typeof(date) == 'object') {
+            return date.toISOString().substring(0, 10)
+          } else {
+            return date;
+          }
+        },
 
-                onLabelCopy: function() {
-                    this.$['label-copy'].openCopyDialog();
-                },
+        /**
+         * 이름 수정
+         */
+        onTapRename: function(e){
+          this.$['renameDialog'].show();
+        },
 
-                /**
-                 * 승인
-                 */
-                onTapConfirm: function(e) {
-                    this.doTransaction(Things.DataGlobal.t('button.confirm'), Things.DataGlobal.t('text.want-to-confirm'), 'confirm');
-                },
+        /**
+         * 이름 수정 저장 시
+         */
+        onDialogClosed: function(e){
+          var renameObject = this.$['renameDialog'].object;
 
-                /**
-                 * 버전 업
-                 */
-                onVersionUp: function(e) {
-                    var eiditingEvents = this.events.filter(function(event) {
-                        return event.status.toLowerCase() !== 'released'
-                    });
-                    if (eiditingEvents && eiditingEvents.length == 0) {
-                        this.doTransaction(Things.DataGlobal.t('button.version-up'), Things.DataGlobal.t('text.want-to-version-up'), 'version-up');
-                    } else {
-                        this.openConfirmMsg({
-                            type: 'warning',
-                            title: Things.DataGlobal.t('button.version-up'),
-                            text: Things.DataGlobal.t('text.can-not-version-up')
-                        });
-                    }
+          if(e.detail.confirmed && renameObject) {
+            var saveRequesst = this.$['save-label'];
+            saveRequesst.body = {description: renameObject.description}
+            saveRequesst.generateRequest();
+          }
+        },
 
-                },
+        /**
+         * 승인 요청
+         */
+        onTapRequestConfirm: function(e) {
+          this.doTransaction(Things.DataGlobal.t('button.request-confirm'), Things.DataGlobal.t('text.want-to-request-confirm'), 'request-confirm');
+        },
 
-                /**
-                 * 트랜잭션 처리 후 현재 버전 정보 Refresh
-                 */
-                refreshCurrentEvent: function(e) {
-                    this.event = e.detail;
-                    this.object = e.detail;
-                    page(`/info/${e.detail.id}`);
-                },
+        /**
+         * 승인 요청 취소
+         */
+        onTapCancelRequestConfirm: function(e) {
+          this.doTransaction(Things.DataGlobal.t('button.cancel-request-confirm'), Things.DataGlobal.t('text.want-to-cancel-request-confirm'), 'cancel-request-confirm');
+        },
 
-                /**
-                 * 트랜잭션 처리
-                 */
-                doTransaction: function(tranTitle, tranMsg, ajaxId) {
-                    var me = this;
+        /**
+         * 복사 
+         */
+        onLabelCopy: function() {
+          this.$['label-copy'].openCopyDialog();
+        },
 
-                    this.openConfirmMsg({
-                        type: 'info',
-                        title: tranTitle,
-                        text: tranMsg,
-                        showCancelButton: true
-                    }, function() {
-                        var ajax = me.$[ajaxId];
-                        ajax.resourceId = me.event.id;
-                        ajax.generateRequest();
-                    });
-                },
-                /**
-                 * localhost인지 아닌지에 따라 Develop mode인지 판단
-                 */
-                isDevelopMode: function() {
-                    return window.location.hostname == 'localhost';
-                },
-                /**
-                 * 선택된 버전 삭재
-                 */
-                onTapDelete: function(e) {
-                    this.doTransaction(Things.DataGlobal.t('button.delete'), Things.DataGlobal.t('text.sure-to-delete'), 'delete');
-                },
-                /**
-                 * 라벨 삭제 완료 후
-                 */
-                _onDeleteLabelSuccess: function(event) {
-                    if (this.events.length == 1) {
-                        this.object = this.events[0];
-                    } else {
-                        this.object = this.events[1];
-                    }
+        /**
+         * 승인
+         */
+        onTapConfirm: function(e) {
+          this.doTransaction(Things.DataGlobal.t('button.confirm'), Things.DataGlobal.t('text.want-to-confirm'), 'confirm');
+        },
 
-                    // 1. 라벨 삭제 후 같은 이름의 라벨이 존재하는 경우
-                    if (this.events.length > 1) {
-                        page(`/info/${this.object.id}`);
-                        // 2. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우
-                    } else {
-                        page(`/list/${this.object.label_group_id}`);
-                    }
-                },
-            });
-        })();
+        /**
+         * 버전 업
+         */
+        onVersionUp: function(e) {
+          var eiditingEvents = this.events.filter(function(event) {
+            return event.status.toLowerCase() !== 'released'
+          });
 
-    </script>
+          if (eiditingEvents && eiditingEvents.length == 0) {
+            this.doTransaction(Things.DataGlobal.t('button.version-up'), Things.DataGlobal.t('text.want-to-version-up'), 'version-up');
+          } else {
+            this.openConfirmMsg({ type: 'warning', title: Things.DataGlobal.t('button.version-up'), text: Things.DataGlobal.t('text.can-not-version-up') });
+          }
+        },
+
+        /**
+         * 트랜잭션 처리 후 현재 버전 정보 Refresh
+         */
+        refreshCurrentEvent: function(e) {
+          this.event = e.detail;
+          this.object = e.detail;
+          page(`/info/${e.detail.id}`);
+        },
+
+        /**
+         * 트랜잭션 처리
+         */
+        doTransaction: function(tranTitle, tranMsg, ajaxId) {
+          var me = this;
+
+          this.openConfirmMsg({
+            type: 'info',
+            title: tranTitle,
+            text: tranMsg,
+            showCancelButton: true
+
+          }, function() {
+            var ajax = me.$[ajaxId];
+            ajax.resourceId = me.event.id;
+            ajax.generateRequest();
+          });
+        },
+
+        /**
+         * localhost인지 아닌지에 따라 Develop mode인지 판단
+         */
+        isDevelopMode: function() {
+          return window.location.hostname == 'localhost';
+        },
+
+        /**
+         * 선택된 버전 삭재
+         */
+        onTapDelete: function(e) {
+          this.doTransaction(Things.DataGlobal.t('button.delete'), Things.DataGlobal.t('text.sure-to-delete'), 'delete');
+        },
+
+        /**
+         * 라벨 삭제 완료 후
+         */
+        _onDeleteLabelSuccess: function(event) {
+          // 1. 라벨 삭제 후 현재 선택될 object 설정 
+          if (this.events.length == 1) {
+            this.object = this.events[0];
+          } else {
+            this.object = this.events[1];
+          }
+
+          // 2. 전체 그룹 다시 조회, 
+          // FIXME --> tightly coupling 수정 필요 : 프로퍼티로 설정하든지, 아래 페이지 이동도 마찬가지 ...
+          this.fire('iron-signal', { name: 'things-list-group-search', data: null });
+
+          // 3. 라벨 삭제 후 같은 이름의 라벨이 존재하는 경우
+          if (this.events.length > 1) {
+            page(`/info/${this.object.id}`);
+
+          // 4. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우 - 그룹별 라벨 조회 페이지로 이동 
+          } else {
+            page(`/list/${this.object.label_group_id}`);
+          }
+        }
+      });
+    })();
+  </script>
 </dom-module>
