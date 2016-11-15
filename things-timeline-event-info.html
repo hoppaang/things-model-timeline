@@ -192,7 +192,7 @@
     <things-new-dialog id="renameDialog" 
                        title= "[[lRename]]" 
                        groups="[[groups]]" 
-                       group="[[object.label_group_id]]" 
+                       group="[[object.group_id]]" 
                        title="[[lChangeInfo]]" 
                        group-disabled="true" 
                        description="[[object.description]]" 
@@ -571,12 +571,7 @@
 
           // 4. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우 - 그룹별 라벨 조회 페이지로 이동 
           } else {
-            if(this.object.label_group_id) {
-              page(`/list/${this.object.label_group_id}`);
-              
-            } else if(this.object.scene_group_id) {
-              page(`/list/${this.object.scene_group_id}`);
-            }
+            page(`/list/${this.object.group_id}`);
           }
         }
       });
