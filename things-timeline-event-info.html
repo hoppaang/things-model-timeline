@@ -167,6 +167,9 @@
         <paper-button on-tap="onTapCancelRequestConfirm" hidden="[[!isApprovalMode]]">
           <things-i18n-msg msgid="button.cancel-request-release" auto>cancel release request</things-i18n-msg>
         </paper-button>
+        <paper-button on-tap="onTapRename">
+          <things-i18n-msg msgid="button.rename" auto>rename</things-i18n-msg>
+        </paper-button>
         <paper-button on-tap="onLabelCopy">
           <things-i18n-msg msgid="button.copy" auto>copy</things-i18n-msg>
         </paper-button>
@@ -178,9 +181,6 @@
       <template is="dom-if" if="{{isDeployUser(globals.user)}}">
         <paper-button on-tap="onTapConfirm" hidden="[[!isApprovalMode]]">
           <things-i18n-msg msgid="button.release" auto>release</things-i18n-msg>
-        </paper-button>
-        <paper-button on-tap="onTapRename">
-          <things-i18n-msg msgid="button.rename" auto>rename</things-i18n-msg>
         </paper-button>
       </template>
     </div>
@@ -199,22 +199,47 @@
                        on-things-new-dialog-closed="onDialogClosed">
     </things-new-dialog>
 
-    <things-ajax id="version-up" resource-url="[[versionUpUrl]]" method="POST" content-type="application/json">
+    <things-ajax 
+      id="version-up" 
+      resource-url="[[versionUpUrl]]" 
+      method="POST" 
+      content-type="application/json">
     </things-ajax>
 
-    <things-ajax id="save-label" resource-url="[[saveUrl]]" resource-id = "[[object.id]]" method="PUT" content-type="application/json">
+    <things-ajax 
+      id="save-label" 
+      resource-url="[[saveUrl]]" 
+      resource-id = "[[object.id]]" 
+      method="PUT" 
+      content-type="application/json">
     </things-ajax>
 
-    <things-ajax id="request-confirm" resource-url="[[requestApprovalUrl]]" method="PUT" content-type="application/json">
+    <things-ajax 
+      id="request-confirm" 
+      resource-url="[[requestApprovalUrl]]" 
+      method="PUT" 
+      content-type="application/json">
     </things-ajax>
 
-    <things-ajax id="cancel-request-confirm" resource-url="[[cancelRequestApprovalUrl]]" method="PUT" content-type="application/json">
+    <things-ajax 
+      id="cancel-request-confirm" 
+      resource-url="[[cancelRequestApprovalUrl]]" 
+      method="PUT" 
+      content-type="application/json">
     </things-ajax>
 
-    <things-ajax id="confirm" resource-url="[[releaseUrl]]" method="PUT" content-type="application/json">
+    <things-ajax 
+      id="confirm" 
+      resource-url="[[releaseUrl]]" 
+      method="PUT" 
+      content-type="application/json">
     </things-ajax>
 
-    <things-ajax id="delete" resource-url="[[deleteUrl]]" method="DELETE" content-type="application/json">
+    <things-ajax 
+      id="delete" 
+      resource-url="[[deleteUrl]]" 
+      method="DELETE" 
+      content-type="application/json">
     </things-ajax>
   </template>
 
@@ -365,17 +390,21 @@
         },
 
         /**
-         * 로그인 사용자가 Designer 인지
+         * 배포 권한이 있는지 - 배포 권한은 Admin 권한과 동일 
+         *
+         * @param {Object} user
          */
-        isDesignUser: function(user) {
-          return (user && (this.isDeployUser(user) || user.designer_flag));
+        isDeployUser: function(user) {
+          return user && (user.super_user || user.admin_flag);
         },
 
         /**
-         * 로그인 사용자가 Deploy 권한이 있는지 체크
+         * 로그인 사용자가 Designer 인지
+         *
+         * @param {Object} user
          */
-        isDeployUser: function(user) {
-          return (user && (user.admin_flag || user.super_user || user.deployer_flag));
+        isDesignUser: function(user) {
+          return (user && user.exclusive_role && user.exclusive_role == 'modeler');
         },
 
         /**
@@ -411,11 +440,10 @@
          * 모델 변경시
          */
         onModelChange: function(model) {
-          if (!model.variables)
-            return;
+          if (!model.variables) return;
 
           this.variables = model.variables.map(function(variable) {
-              return variable.name
+              return variable.name;
           }).join(', ');
         },
 
@@ -455,7 +483,7 @@
         /**
          * 이름 수정 저장 시
          */
-        onDialogClosed: function(e){
+        onDialogClosed: function(e) {
           var renameObject = this.$['renameDialog'].object;
 
           if(e.detail.confirmed && renameObject) {
