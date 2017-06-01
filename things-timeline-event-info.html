@@ -523,7 +523,7 @@
         refreshCurrentEvent: function(e) {
           this.event = e.detail;
           this.object = e.detail;
-          page(`/info/${e.detail.id}`);
+          page(`/info/${e.detail.name}/${e.detail.version}`);
         },
 
         /**
