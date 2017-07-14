@@ -6,7 +6,7 @@
   ],
   "description": "for things-label,things-point",
   "main": "elements.html",
-  "license": "MIT",
+  "license": "http://things-scene.hatiolab.com/EULA/",
   "ignore": [
     "**/.*",
     "node_modules",
