@@ -581,7 +581,7 @@ Copyright © HatioLab Inc. All rights reserved.
 
           // 3. 라벨 삭제 후 같은 이름의 라벨이 존재하는 경우
           if (this.events.length > 1) {
-            page(`/info/${this.object.id}`);
+            page(`/info/${this.object.name}/${this.object.version}`);
 
           // 4. 라벨 삭제 후 같은 이름의 라벨이 존재하지 않는 경우 - 그룹별 라벨 조회 페이지로 이동
           } else {
